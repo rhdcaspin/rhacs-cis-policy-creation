@@ -1,0 +1,225 @@
+{
+  "corrected_failing_policies": [
+    {
+      "policy_name": "CIS-K8s-5.7.1 - Ensure that secrets are not stored as environment variables",
+      "issue": "Field 'Environment Variable Source' is invalid",
+      "fix": "Use 'Environment Key' field instead",
+      "corrected_policy": {
+        "name": "CIS-K8s-5.7.1 - Ensure that secrets are not stored as environment variables",
+        "description": "CIS Kubernetes Benchmark 5.7.1: Do not use environment variables for secret data",
+        "rationale": "Environment variables can be accidentally exposed in logs or process lists",
+        "remediation": "Use volume mounts or secret references instead of environment variables for secrets",
+        "disabled": false,
+        "categories": ["Security Best Practices"],
+        "lifecycleStages": ["DEPLOY"],
+        "eventSource": "NOT_APPLICABLE",
+        "exclusions": [],
+        "scope": [],
+        "severity": "MEDIUM_SEVERITY",
+        "enforcementActions": ["FAIL_DEPLOYMENT"],
+        "notifiers": [],
+        "SORTName": "",
+        "SORTLifecycleStage": "",
+        "SORTEnforcement": false,
+        "policyVersion": "1.1",
+        "policySections": [
+          {
+            "sectionName": "Container Configuration",
+            "policyGroups": [
+              {
+                "fieldName": "Environment Key",
+                "booleanOperator": "OR",
+                "negate": false,
+                "values": [
+                  {
+                    "value": ".*[Pp][Aa][Ss][Ss].*"
+                  },
+                  {
+                    "value": ".*[Ss][Ee][Cc][Rr][Ee][Tt].*"
+                  },
+                  {
+                    "value": ".*[Tt][Oo][Kk][Ee][Nn].*"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "mitreAttackVectors": [
+          {
+            "tactic": "TA0006",
+            "techniques": ["T1552"]
+          }
+        ],
+        "criteriaLocked": false,
+        "mitreVectorsLocked": false,
+        "isDefault": false
+      }
+    },
+    {
+      "policy_name": "CIS-Docker-5.7 - Ensure privileged ports are not mapped",
+      "issue": "Value '1-1023' doesn't match required regex - needs individual port numbers",
+      "fix": "Use individual port numbers instead of ranges",
+      "corrected_policy": {
+        "name": "CIS-Docker-5.7 - Ensure privileged ports are not mapped",
+        "description": "CIS Docker Benchmark 5.7: Ensure privileged ports are not mapped within containers",
+        "rationale": "The TCP/IP port numbers below 1024 are considered privileged ports",
+        "remediation": "You should not map container ports to privileged host ports when starting a container",
+        "disabled": false,
+        "categories": ["Security Best Practices"],
+        "lifecycleStages": ["DEPLOY"],
+        "eventSource": "NOT_APPLICABLE",
+        "exclusions": [],
+        "scope": [],
+        "severity": "MEDIUM_SEVERITY",
+        "enforcementActions": ["FAIL_DEPLOYMENT"],
+        "notifiers": [],
+        "SORTName": "",
+        "SORTLifecycleStage": "",
+        "SORTEnforcement": false,
+        "policyVersion": "1.1",
+        "policySections": [
+          {
+            "sectionName": "Container Configuration",
+            "policyGroups": [
+              {
+                "fieldName": "Exposed Port",
+                "booleanOperator": "OR",
+                "negate": false,
+                "values": [
+                  {
+                    "value": "<1024"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "mitreAttackVectors": [
+          {
+            "tactic": "TA0008",
+            "techniques": ["T1021"]
+          }
+        ],
+        "criteriaLocked": false,
+        "mitreVectorsLocked": false,
+        "isDefault": false
+      }
+    },
+    {
+      "policy_name": "CIS-Docker-5.25 - Ensure container is restricted from acquiring additional privileges",
+      "issue": "Value '.*' doesn't match capability regex - needs specific capability names",
+      "fix": "Use specific dangerous Linux capabilities",
+      "corrected_policy": {
+        "name": "CIS-Docker-5.25 - Ensure container is restricted from acquiring additional privileges",
+        "description": "CIS Docker Benchmark 5.25: Ensure that the container is restricted from acquiring additional privileges",
+        "rationale": "restrict a container from acquiring additional privileges via suid or sgid bits",
+        "remediation": "You should start your container with --security-opt=no-new-privileges option",
+        "disabled": false,
+        "categories": ["Security Best Practices"],
+        "lifecycleStages": ["DEPLOY"],
+        "eventSource": "NOT_APPLICABLE",
+        "exclusions": [],
+        "scope": [],
+        "severity": "HIGH_SEVERITY",
+        "enforcementActions": ["FAIL_DEPLOYMENT"],
+        "notifiers": [],
+        "SORTName": "",
+        "SORTLifecycleStage": "",
+        "SORTEnforcement": false,
+        "policyVersion": "1.1",
+        "policySections": [
+          {
+            "sectionName": "Container Configuration",
+            "policyGroups": [
+              {
+                "fieldName": "Add Capabilities",
+                "booleanOperator": "OR",
+                "negate": false,
+                "values": [
+                  {
+                    "value": "SYS_ADMIN"
+                  },
+                  {
+                    "value": "DAC_OVERRIDE"
+                  },
+                  {
+                    "value": "SETUID"
+                  },
+                  {
+                    "value": "SETGID"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "mitreAttackVectors": [
+          {
+            "tactic": "TA0004",
+            "techniques": ["T1548"]
+          }
+        ],
+        "criteriaLocked": false,
+        "mitreVectorsLocked": false,
+        "isDefault": false
+      }
+    },
+    {
+      "policy_name": "CIS-Docker-4.1 - Ensure image is not running as root",
+      "issue": "Field 'Dockerfile Instruction Keyword' invalid in Image Configuration section",
+      "fix": "This should check the actual user in deployed containers, not dockerfile instructions",
+      "corrected_policy": {
+        "name": "CIS-Docker-4.1 - Ensure image is not running as root",
+        "description": "CIS Docker Benchmark 4.1: Ensure that a user for the container has been created",
+        "rationale": "Running containers as root increases the risk of privilege escalation",
+        "remediation": "Ensure that the Dockerfile for the container image contains a USER instruction to run the container as a non-root user",
+        "disabled": false,
+        "categories": ["Security Best Practices"],
+        "lifecycleStages": ["DEPLOY"],
+        "eventSource": "NOT_APPLICABLE",
+        "exclusions": [],
+        "scope": [],
+        "severity": "HIGH_SEVERITY",
+        "enforcementActions": ["FAIL_DEPLOYMENT"],
+        "notifiers": [],
+        "SORTName": "",
+        "SORTLifecycleStage": "",
+        "SORTEnforcement": false,
+        "policyVersion": "1.1",
+        "policySections": [
+          {
+            "sectionName": "Container Configuration",
+            "policyGroups": [
+              {
+                "fieldName": "Image User",
+                "booleanOperator": "OR",
+                "negate": false,
+                "values": [
+                  {
+                    "value": "root"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "mitreAttackVectors": [
+          {
+            "tactic": "TA0004",
+            "techniques": ["T1548"]
+          }
+        ],
+        "criteriaLocked": false,
+        "mitreVectorsLocked": false,
+        "isDefault": false
+      }
+    },
+    {
+      "policy_name": "CIS-Docker-5.2 - Ensure SELinux security options are set if applicable",
+      "issue": "Field 'SELinux Options' doesn't exist",
+      "fix": "Remove this policy as SELinux options may not be supported in this RHACS version",
+      "action": "SKIP - Field not available"
+    }
+  ]
+} 

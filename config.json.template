@@ -1,0 +1,14 @@
+{
+  "rhacs": {
+    "central_url": "https://your-rhacs-central.example.com:443",
+    "api_token": "your-rhacs-api-token-here"
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(levelname)s - %(message)s"
+  },
+  "policies": {
+    "config_file": "cis_policies.json",
+    "skip_existing": true
+  }
+} 

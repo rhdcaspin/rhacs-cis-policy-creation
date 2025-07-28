@@ -1,0 +1,210 @@
+{
+  "corrected_policies": [
+    {
+      "original_name": "CIS-K8s-5.1.5 - Minimize Root Containers",
+      "fix": "Change 'Container User ID' to 'Image User'",
+      "corrected_policy": {
+        "name": "CIS-K8s-5.1.5 - Minimize Root Containers",
+        "description": "CIS Kubernetes Benchmark 5.1.5: Ensure that Pod Security Policy forbids running containers as root",
+        "rationale": "Containers should not run as root user to minimize privilege escalation risks",
+        "remediation": "Create a Pod Security Policy that requires runAsNonRoot: true",
+        "disabled": false,
+        "categories": ["Security Best Practices"],
+        "lifecycleStages": ["DEPLOY"],
+        "eventSource": "NOT_APPLICABLE",
+        "exclusions": [],
+        "scope": [],
+        "severity": "HIGH_SEVERITY",
+        "enforcementActions": ["FAIL_DEPLOYMENT"],
+        "notifiers": [],
+        "SORTName": "",
+        "SORTLifecycleStage": "",
+        "SORTEnforcement": false,
+        "policyVersion": "1.1",
+        "policySections": [
+          {
+            "sectionName": "Container Configuration",
+            "policyGroups": [
+              {
+                "fieldName": "Image User",
+                "booleanOperator": "OR",
+                "negate": false,
+                "values": [
+                  {
+                    "value": "root"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "mitreAttackVectors": [
+          {
+            "tactic": "TA0004",
+            "techniques": ["T1548"]
+          }
+        ],
+        "criteriaLocked": false,
+        "mitreVectorsLocked": false,
+        "isDefault": false
+      }
+    },
+    {
+      "original_name": "CIS-K8s-Resource-Limits - Ensure CPU and Memory limits are set",
+      "fix": "Change 'CPU Limit' to 'CPU Cores Limit' and 'Memory Limit' to 'Memory Limit (MB)'",
+      "corrected_policy": {
+        "name": "CIS-K8s-Resource-Limits - Ensure CPU and Memory limits are set",
+        "description": "Ensure that CPU and memory limits are set for containers to prevent resource exhaustion",
+        "rationale": "Resource limits prevent containers from consuming excessive resources and impacting other workloads",
+        "remediation": "Set CPU and memory limits for all containers",
+        "disabled": false,
+        "categories": ["Security Best Practices"],
+        "lifecycleStages": ["DEPLOY"],
+        "eventSource": "NOT_APPLICABLE",
+        "exclusions": [],
+        "scope": [],
+        "severity": "MEDIUM_SEVERITY",
+        "enforcementActions": ["FAIL_DEPLOYMENT"],
+        "notifiers": [],
+        "SORTName": "",
+        "SORTLifecycleStage": "",
+        "SORTEnforcement": false,
+        "policyVersion": "1.1",
+        "policySections": [
+          {
+            "sectionName": "Container Configuration",
+            "policyGroups": [
+              {
+                "fieldName": "CPU Cores Limit",
+                "booleanOperator": "OR",
+                "negate": true,
+                "values": [
+                  {
+                    "value": ".*"
+                  }
+                ]
+              },
+              {
+                "fieldName": "Memory Limit (MB)",
+                "booleanOperator": "OR",
+                "negate": true,
+                "values": [
+                  {
+                    "value": ".*"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "mitreAttackVectors": [
+          {
+            "tactic": "TA0040",
+            "techniques": ["T1496"]
+          }
+        ],
+        "criteriaLocked": false,
+        "mitreVectorsLocked": false,
+        "isDefault": false
+      }
+    },
+    {
+      "original_name": "CIS-Docker-5.10 - Ensure memory usage for container is limited",
+      "fix": "Change 'Memory Limit' to 'Memory Limit (MB)'",
+      "corrected_policy": {
+        "name": "CIS-Docker-5.10 - Ensure memory usage for container is limited",
+        "description": "CIS Docker Benchmark 5.10: Ensure memory usage for container is limited",
+        "rationale": "Memory limits prevent containers from consuming excessive memory and impacting host stability",
+        "remediation": "Set memory limits for all containers to prevent resource exhaustion",
+        "disabled": false,
+        "categories": ["Security Best Practices"],
+        "lifecycleStages": ["DEPLOY"],
+        "eventSource": "NOT_APPLICABLE",
+        "exclusions": [],
+        "scope": [],
+        "severity": "MEDIUM_SEVERITY",
+        "enforcementActions": ["FAIL_DEPLOYMENT"],
+        "notifiers": [],
+        "SORTName": "",
+        "SORTLifecycleStage": "",
+        "SORTEnforcement": false,
+        "policyVersion": "1.1",
+        "policySections": [
+          {
+            "sectionName": "Container Configuration",
+            "policyGroups": [
+              {
+                "fieldName": "Memory Limit (MB)",
+                "booleanOperator": "OR",
+                "negate": true,
+                "values": [
+                  {
+                    "value": ".*"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "mitreAttackVectors": [
+          {
+            "tactic": "TA0040",
+            "techniques": ["T1496"]
+          }
+        ],
+        "criteriaLocked": false,
+        "mitreVectorsLocked": false,
+        "isDefault": false
+      }
+    },
+    {
+      "original_name": "CIS-Docker-5.11 - Ensure CPU priority is set appropriately on the container",
+      "fix": "Change 'CPU Limit' to 'CPU Cores Limit'",
+      "corrected_policy": {
+        "name": "CIS-Docker-5.11 - Ensure CPU priority is set appropriately on the container",
+        "description": "CIS Docker Benchmark 5.11: Ensure CPU priority is set appropriately on the container",
+        "rationale": "CPU limits prevent containers from consuming excessive CPU resources",
+        "remediation": "Set CPU limits and priorities for containers to ensure fair resource allocation",
+        "disabled": false,
+        "categories": ["Security Best Practices"],
+        "lifecycleStages": ["DEPLOY"],
+        "eventSource": "NOT_APPLICABLE",
+        "exclusions": [],
+        "scope": [],
+        "severity": "MEDIUM_SEVERITY",
+        "enforcementActions": ["FAIL_DEPLOYMENT"],
+        "notifiers": [],
+        "SORTName": "",
+        "SORTLifecycleStage": "",
+        "SORTEnforcement": false,
+        "policyVersion": "1.1",
+        "policySections": [
+          {
+            "sectionName": "Container Configuration",
+            "policyGroups": [
+              {
+                "fieldName": "CPU Cores Limit",
+                "booleanOperator": "OR",
+                "negate": true,
+                "values": [
+                  {
+                    "value": ".*"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "mitreAttackVectors": [
+          {
+            "tactic": "TA0040",
+            "techniques": ["T1496"]
+          }
+        ],
+        "criteriaLocked": false,
+        "mitreVectorsLocked": false,
+        "isDefault": false
+      }
+    }
+  ]
+} 

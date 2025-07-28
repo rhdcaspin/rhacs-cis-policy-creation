@@ -1,0 +1,2341 @@
+{
+  "kubernetes_policies": [
+    {
+      "name": "CIS-K8s-5.1.1 - Minimize Privileged Containers",
+      "description": "CIS Kubernetes Benchmark 5.1.1: Ensure that a Pod Security Policy forbids privileged containers",
+      "rationale": "Privileged containers have access to all Linux kernel capabilities and devices",
+      "remediation": "Create a Pod Security Policy that sets privileged: false",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Privileged Container",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.1.2 - Minimize hostNetwork Usage",
+      "description": "CIS Kubernetes Benchmark 5.1.2: Ensure that Pod Security Policy forbids usage of hostNetwork",
+      "rationale": "hostNetwork controls whether the pod may use the node network namespace",
+      "remediation": "Create a Pod Security Policy that sets hostNetwork: false",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Host Network",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.1.3 - Minimize hostPID and hostIPC Usage",
+      "description": "CIS Kubernetes Benchmark 5.1.3: Ensure that Pod Security Policy forbids usage of hostPID and hostIPC",
+      "rationale": "hostPID and hostIPC controls whether the pod containers can share the host process ID namespace",
+      "remediation": "Create a Pod Security Policy that sets hostPID: false and hostIPC: false",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Host PID",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            },
+            {
+              "fieldName": "Host IPC",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.1.4 - Minimize allowPrivilegeEscalation",
+      "description": "CIS Kubernetes Benchmark 5.1.4: Ensure that Pod Security Policy forbids containers from allowPrivilegeEscalation",
+      "rationale": "allowPrivilegeEscalation controls whether a process can gain more privileges than its parent process",
+      "remediation": "Create a Pod Security Policy that sets allowPrivilegeEscalation: false",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Allow Privilege Escalation",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.1.5 - Minimize Root Containers",
+      "description": "CIS Kubernetes Benchmark 5.1.5: Ensure that Pod Security Policy forbids running containers as root",
+      "rationale": "Containers should not run as root user to minimize privilege escalation risks",
+      "remediation": "Create a Pod Security Policy that requires runAsNonRoot: true",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image User",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "root"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.1.6 - Minimize capabilities",
+      "description": "CIS Kubernetes Benchmark 5.1.6: Ensure that Pod Security Policy forbids containers from acquiring dangerous capabilities",
+      "rationale": "Linux capabilities provide a finer-grained breakdown of the privileges traditionally associated with the superuser",
+      "remediation": "Create a Pod Security Policy that limits the capabilities that can be added to containers",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Add Capabilities",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "SYS_ADMIN"
+                },
+                {
+                  "value": "NET_ADMIN"
+                },
+                {
+                  "value": "SYS_TIME"
+                },
+                {
+                  "value": "SYS_MODULE"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.2.1 - Minimize admission of containers with allowPrivilegeEscalation",
+      "description": "CIS Kubernetes Benchmark 5.2.1: Do not admit containers with allowPrivilegeEscalation set to true",
+      "rationale": "allowPrivilegeEscalation controls whether a process can gain more privileges than its parent process",
+      "remediation": "Create policies that prevent containers from running with allowPrivilegeEscalation set to true",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Allow Privilege Escalation",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.2.3 - Minimize admission of containers with allowedHostPaths",
+      "description": "CIS Kubernetes Benchmark 5.2.3: Do not admit containers with dangerous volume types",
+      "rationale": "Certain volume types should not be allowed as they can expose sensitive host information",
+      "remediation": "Create policies that prevent containers from mounting dangerous volume types",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Volume Type",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "HostPath"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.2.4 - Minimize admission of containers with NET_RAW capability",
+      "description": "CIS Kubernetes Benchmark 5.2.4: Do not admit containers with NET_RAW capability",
+      "rationale": "NET_RAW capability allows a container to create raw sockets which can be used for network sniffing",
+      "remediation": "Create policies that prevent containers from acquiring the NET_RAW capability",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Add Capabilities",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "NET_RAW"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0007",
+          "techniques": [
+            "T1040"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.3.1 - Ensure CNI in use supports Network Policies",
+      "description": "CIS Kubernetes Benchmark 5.3.1: Ensure that the CNI in use supports Network Policies",
+      "rationale": "Network policies are important for micro-segmentation in Kubernetes clusters",
+      "remediation": "Ensure network policies are defined and enforced",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Deployment Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Namespace",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": "kube-system"
+                },
+                {
+                  "value": "kube-public"
+                },
+                {
+                  "value": "kube-node-lease"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0008",
+          "techniques": [
+            "T1021"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.7.1 - Ensure that secrets are not stored as environment variables",
+      "description": "CIS Kubernetes Benchmark 5.7.1: Do not use environment variables for secret data",
+      "rationale": "Environment variables can be accidentally exposed in logs or process lists",
+      "remediation": "Use volume mounts or secret references instead of environment variables for secrets",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Environment Value",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*[Pp][Aa][Ss][Ss].*"
+                },
+                {
+                  "value": ".*[Ss][Ee][Cc][Rr][Ee][Tt].*"
+                },
+                {
+                  "value": ".*[Tt][Oo][Kk][Ee][Nn].*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-5.7.2 - Ensure that default service accounts are not actively used",
+      "description": "CIS Kubernetes Benchmark 5.7.2: Ensure default service accounts are not actively used",
+      "rationale": "Default service accounts have broad permissions and should not be used by applications",
+      "remediation": "Create dedicated service accounts for applications with minimal required permissions",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Service Account",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "default"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1078"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-Resource-Limits - Ensure CPU and Memory limits are set",
+      "description": "Ensure that CPU and memory limits are set for containers to prevent resource exhaustion",
+      "rationale": "Resource limits prevent containers from consuming excessive resources and impacting other workloads",
+      "remediation": "Set CPU and memory limits for all containers",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "CPU Cores Limit",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            },
+            {
+              "fieldName": "Memory Limit (MB)",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0040",
+          "techniques": [
+            "T1496"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    }
+  ],
+  "runtime_policies": [
+    {
+      "name": "CIS-K8s-Runtime-1 - Detect Unauthorized Process Execution",
+      "description": "Runtime detection of unauthorized processes in containers based on CIS Kubernetes benchmarks",
+      "rationale": "Containers should only run expected processes to minimize attack surface",
+      "remediation": "Investigate the source of unauthorized processes and update container configurations",
+      "disabled": false,
+      "categories": [
+        "Anomalous Activity"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "KILL_POD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "/bin/sh"
+                },
+                {
+                  "value": "/bin/bash"
+                },
+                {
+                  "value": "/bin/dash"
+                },
+                {
+                  "value": "nc"
+                },
+                {
+                  "value": "netcat"
+                },
+                {
+                  "value": "ncat"
+                },
+                {
+                  "value": "telnet"
+                },
+                {
+                  "value": "ssh"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0002",
+          "techniques": [
+            "T1059"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-Runtime-2 - Detect Privilege Escalation Attempts",
+      "description": "Runtime detection of privilege escalation attempts based on CIS security practices",
+      "rationale": "Privilege escalation attempts should be detected and prevented in real-time",
+      "remediation": "Investigate the source of privilege escalation attempts and strengthen container security",
+      "disabled": false,
+      "categories": [
+        "Privilege Escalation"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "KILL_POD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "sudo"
+                },
+                {
+                  "value": "su"
+                },
+                {
+                  "value": "passwd"
+                },
+                {
+                  "value": "chroot"
+                },
+                {
+                  "value": "mount"
+                },
+                {
+                  "value": "umount"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-Runtime-3 - Detect Unauthorized Network Connections",
+      "description": "Runtime detection of unauthorized outbound network connections via network tools",
+      "rationale": "Containers should only establish expected network connections",
+      "remediation": "Review and restrict container network policies and remove network tools",
+      "disabled": false,
+      "categories": [
+        "Network Activity"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "nc"
+                },
+                {
+                  "value": "netcat"
+                },
+                {
+                  "value": "ncat"
+                },
+                {
+                  "value": "socat"
+                },
+                {
+                  "value": "telnet"
+                },
+                {
+                  "value": "ssh"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0011",
+          "techniques": [
+            "T1071"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-K8s-Runtime-4 - Detect File System Modifications in Read-Only Areas",
+      "description": "Runtime detection of file modifications in areas that should be read-only",
+      "rationale": "Unauthorized file modifications may indicate compromise",
+      "remediation": "Investigate file modification attempts and strengthen file system protections",
+      "disabled": false,
+      "categories": [
+        "System Modification"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "KILL_POD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Arguments",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*/etc/.*"
+                },
+                {
+                  "value": ".*/usr/.*"
+                },
+                {
+                  "value": ".*/bin/.*"
+                },
+                {
+                  "value": ".*/sbin/.*"
+                }
+              ]
+            },
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "rm"
+                },
+                {
+                  "value": "mv"
+                },
+                {
+                  "value": "cp"
+                },
+                {
+                  "value": "chmod"
+                },
+                {
+                  "value": "chown"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0005",
+          "techniques": [
+            "T1222"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-Runtime-1 - Detect Container Escape Attempts",
+      "description": "Runtime detection of container escape attempts based on CIS Docker benchmarks",
+      "rationale": "Container escape attempts should be detected immediately",
+      "remediation": "Investigate escape attempts and strengthen container isolation",
+      "disabled": false,
+      "categories": [
+        "Container Escape"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "CRITICAL_SEVERITY",
+      "enforcementActions": [
+        "KILL_POD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "runc"
+                },
+                {
+                  "value": "docker"
+                },
+                {
+                  "value": "containerd"
+                },
+                {
+                  "value": "kubectl"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-Runtime-2 - Detect Cryptocurrency Mining",
+      "description": "Runtime detection of cryptocurrency mining processes",
+      "rationale": "Cryptocurrency mining indicates potential compromise and resource abuse",
+      "remediation": "Terminate mining processes and investigate compromise vector",
+      "disabled": false,
+      "categories": [
+        "Cryptocurrency Mining"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "KILL_POD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "xmrig"
+                },
+                {
+                  "value": "minerd"
+                },
+                {
+                  "value": "cpuminer"
+                },
+                {
+                  "value": "cryptonight"
+                },
+                {
+                  "value": "stratum"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0040",
+          "techniques": [
+            "T1496"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-Runtime-3 - Detect Suspicious Network Tools",
+      "description": "Runtime detection of network reconnaissance and attack tools",
+      "rationale": "Network attack tools indicate potential malicious activity",
+      "remediation": "Investigate the source and purpose of network tools",
+      "disabled": false,
+      "categories": [
+        "Network Tools"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "KILL_POD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "nmap"
+                },
+                {
+                  "value": "masscan"
+                },
+                {
+                  "value": "zmap"
+                },
+                {
+                  "value": "nikto"
+                },
+                {
+                  "value": "sqlmap"
+                },
+                {
+                  "value": "dirb"
+                },
+                {
+                  "value": "gobuster"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0007",
+          "techniques": [
+            "T1046"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Runtime-4 - Detect Package Manager Usage",
+      "description": "Runtime detection of package manager usage which may indicate unauthorized software installation",
+      "rationale": "Package managers should not be used in production containers",
+      "remediation": "Investigate package installation attempts and remove package managers from production images",
+      "disabled": false,
+      "categories": [
+        "Package Management"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "apt"
+                },
+                {
+                  "value": "apt-get"
+                },
+                {
+                  "value": "yum"
+                },
+                {
+                  "value": "dnf"
+                },
+                {
+                  "value": "apk"
+                },
+                {
+                  "value": "pip"
+                },
+                {
+                  "value": "npm"
+                },
+                {
+                  "value": "gem"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0003",
+          "techniques": [
+            "T1505"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Runtime-5 - Detect Suspicious File Downloads",
+      "description": "Runtime detection of file download activities that may indicate malware installation",
+      "rationale": "Unauthorized file downloads may indicate compromise",
+      "remediation": "Investigate download sources and implement network restrictions",
+      "disabled": false,
+      "categories": [
+        "File Download"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "wget"
+                },
+                {
+                  "value": "curl"
+                },
+                {
+                  "value": "ftp"
+                },
+                {
+                  "value": "scp"
+                },
+                {
+                  "value": "rsync"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0011",
+          "techniques": [
+            "T1105"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Runtime-6 - Detect Unauthorized Port Binding",
+      "description": "Runtime detection of processes attempting to bind to suspicious network ports",
+      "rationale": "Unauthorized port binding may indicate malicious network services",
+      "remediation": "Investigate unauthorized network services and implement network policies",
+      "disabled": false,
+      "categories": [
+        "Network Binding"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Arguments",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*:22.*"
+                },
+                {
+                  "value": ".*:23.*"
+                },
+                {
+                  "value": ".*:1337.*"
+                },
+                {
+                  "value": ".*:4444.*"
+                },
+                {
+                  "value": ".*:5555.*"
+                },
+                {
+                  "value": ".*:8080.*"
+                },
+                {
+                  "value": ".*:9999.*"
+                },
+                {
+                  "value": ".*-p.*22.*"
+                },
+                {
+                  "value": ".*--port.*"
+                },
+                {
+                  "value": ".*listen.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0011",
+          "techniques": [
+            "T1571"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    }
+  ],
+  "docker_policies": [
+    {
+      "name": "CIS-Docker-4.1 - Ensure image is not running as root",
+      "description": "CIS Docker Benchmark 4.1: Ensure that a user for the container has been created",
+      "rationale": "Running containers as root increases the risk of privilege escalation",
+      "remediation": "Ensure that the Dockerfile for the container image contains a USER instruction to run the container as a non-root user",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image User",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "root"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-4.7 - Ensure sensitive host system directories are not mounted",
+      "description": "CIS Docker Benchmark 4.7: Ensure sensitive host system directories are not mounted on containers",
+      "rationale": "Mounting sensitive host system directories can expose the host system to security risks",
+      "remediation": "Do not mount host system directories like /, /boot, /dev, /etc, /lib, /proc, /sys, /usr on containers",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Volume Source",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "/"
+                },
+                {
+                  "value": "/boot"
+                },
+                {
+                  "value": "/dev"
+                },
+                {
+                  "value": "/etc"
+                },
+                {
+                  "value": "/lib"
+                },
+                {
+                  "value": "/proc"
+                },
+                {
+                  "value": "/sys"
+                },
+                {
+                  "value": "/usr"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.1 - Ensure AppArmor Profile is Enabled",
+      "description": "CIS Docker Benchmark 5.1: Ensure that AppArmor Profile is enabled",
+      "rationale": "AppArmor is an effective and easy-to-use Linux application security system",
+      "remediation": "If AppArmor is applicable for your Linux OS, use it. You may have to follow below set of steps: 1. Verify if AppArmor is installed 2. Create or import a AppArmor profile for Docker containers 3. Put this profile in enforcing mode 4. Start your Docker container using the customized AppArmor profile",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "AppArmor Profile",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "unconfined"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0005",
+          "techniques": [
+            "T1562"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.7 - Ensure privileged ports are not mapped",
+      "description": "CIS Docker Benchmark 5.7: Ensure privileged ports are not mapped within containers",
+      "rationale": "The TCP/IP port numbers below 1024 are considered privileged ports",
+      "remediation": "You should not map container ports to privileged host ports when starting a container",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Exposed Port",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "<1024"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0008",
+          "techniques": [
+            "T1021"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.25 - Ensure container is restricted from acquiring additional privileges",
+      "description": "CIS Docker Benchmark 5.25: Ensure that the container is restricted from acquiring additional privileges",
+      "rationale": "restrict a container from acquiring additional privileges via suid or sgid bits",
+      "remediation": "You should start your container with --security-opt=no-new-privileges option",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Add Capabilities",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "SYS_ADMIN"
+                },
+                {
+                  "value": "DAC_OVERRIDE"
+                },
+                {
+                  "value": "SETUID"
+                },
+                {
+                  "value": "SETGID"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-4.2 - Ensure that containers use only trusted base images",
+      "description": "CIS Docker Benchmark 4.2: Ensure that containers use only trusted base images",
+      "rationale": "Using untrusted base images can introduce vulnerabilities and malicious code",
+      "remediation": "Configure container image scanning and use only images from trusted registries",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "BUILD",
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_BUILD_ENFORCEMENT",
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image Registry",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": "docker.io"
+                },
+                {
+                  "value": "quay.io"
+                },
+                {
+                  "value": "gcr.io"
+                },
+                {
+                  "value": "registry.redhat.io"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0001",
+          "techniques": [
+            "T1190"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-4.3 - Ensure unnecessary packages are not installed",
+      "description": "CIS Docker Benchmark 4.3: Ensure unnecessary packages are not installed in container images",
+      "rationale": "Unnecessary packages increase attack surface and potential vulnerabilities",
+      "remediation": "Use minimal base images and avoid installing unnecessary packages",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "BUILD"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_BUILD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Dockerfile Instruction Keyword",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "RUN.*apt.*install.*wget"
+                },
+                {
+                  "value": "RUN.*yum.*install.*wget"
+                },
+                {
+                  "value": "RUN.*apt.*install.*curl"
+                },
+                {
+                  "value": "RUN.*yum.*install.*curl"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0001",
+          "techniques": [
+            "T1190"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-4.4 - Ensure images are scanned and rebuilt to include security patches",
+      "description": "CIS Docker Benchmark 4.4: Ensure images are scanned and rebuilt to include security patches",
+      "rationale": "Regular image scanning and rebuilding ensures security patches are applied",
+      "remediation": "Implement automated image scanning and rebuilding processes",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "BUILD",
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_BUILD_ENFORCEMENT",
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image Age",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "90"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0001",
+          "techniques": [
+            "T1190"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-4.5 - Ensure Content trust for Docker is Enabled",
+      "description": "CIS Docker Benchmark 4.5: Ensure Content trust for Docker is Enabled",
+      "rationale": "Content trust ensures the integrity and freshness of container images",
+      "remediation": "Enable Docker Content Trust to verify image signatures",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image Signature Verified By",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0001",
+          "techniques": [
+            "T1190"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-4.6 - Ensure HEALTHCHECK instruction has been added to container image",
+      "description": "CIS Docker Benchmark 4.6: Ensure HEALTHCHECK instruction has been added to container image",
+      "rationale": "Health checks help ensure containers are running properly and enable automated recovery",
+      "remediation": "Add HEALTHCHECK instruction to Dockerfiles to monitor container health",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "BUILD"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "LOW_SEVERITY",
+      "enforcementActions": [
+        "FAIL_BUILD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Dockerfile Instruction Keyword",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": "HEALTHCHECK"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0040",
+          "techniques": [
+            "T1498"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.2 - Ensure SELinux security options are set if applicable",
+      "description": "CIS Docker Benchmark 5.2: Ensure SELinux security options are set if applicable",
+      "rationale": "SELinux provides mandatory access control that can contain container compromises",
+      "remediation": "Enable and configure SELinux for containers when available",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "SELinux Options",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0005",
+          "techniques": [
+            "T1562"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.8 - Ensure the host's user namespaces are not shared",
+      "description": "CIS Docker Benchmark 5.8: Ensure the host's user namespaces are not shared",
+      "rationale": "Sharing user namespaces can allow privilege escalation attacks",
+      "remediation": "Do not share the host's user namespace with containers",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image User",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "root"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.9 - Ensure the host's network namespace is not shared",
+      "description": "CIS Docker Benchmark 5.9: Ensure the host's network namespace is not shared",
+      "rationale": "Sharing the host network namespace provides the container full access to the host's network interfaces",
+      "remediation": "Do not use host network mode for containers",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Host Network",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.10 - Ensure memory usage for container is limited",
+      "description": "CIS Docker Benchmark 5.10: Ensure memory usage for container is limited",
+      "rationale": "Memory limits prevent containers from consuming excessive memory and impacting host stability",
+      "remediation": "Set memory limits for all containers to prevent resource exhaustion",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Memory Limit (MB)",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0040",
+          "techniques": [
+            "T1496"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.11 - Ensure CPU priority is set appropriately on the container",
+      "description": "CIS Docker Benchmark 5.11: Ensure CPU priority is set appropriately on the container",
+      "rationale": "CPU limits prevent containers from consuming excessive CPU resources",
+      "remediation": "Set CPU limits and priorities for containers to ensure fair resource allocation",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "CPU Cores Limit",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0040",
+          "techniques": [
+            "T1496"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "CIS-Docker-5.12 - Ensure the container's root filesystem is mounted as read only",
+      "description": "CIS Docker Benchmark 5.12: Ensure the container's root filesystem is mounted as read only",
+      "rationale": "Read-only root filesystems prevent malicious modifications to the container",
+      "remediation": "Mount container root filesystems as read-only and use volumes for writable data",
+      "disabled": false,
+      "categories": [
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Read-Only Root Filesystem",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "false"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0005",
+          "techniques": [
+            "T1222"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    }
+  ]
+}
