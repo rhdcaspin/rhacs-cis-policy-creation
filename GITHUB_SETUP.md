@@ -20,7 +20,7 @@ After creating the repository, GitHub will show you commands. Use these commands
 
 ```bash
 # Add the GitHub repository as remote origin
-git remote add origin https://github.com/YOUR_USERNAME/rhacs-cis-policy-creation.git
+git remote add origin https://github.com/rhdcaspin/rhacs-cis-policy-creation.git
 
 # Push your code to GitHub
 git branch -M main
