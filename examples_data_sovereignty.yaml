@@ -1,0 +1,454 @@
+# Data Sovereignty Policy Examples
+# This file contains practical examples for implementing data sovereignty controls
+
+---
+# Example 1: EU-Compliant Deployment with Node Affinity
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eu-payment-processor
+  namespace: production
+  labels:
+    data-classification: eu-regulated
+    compliance: gdpr
+  annotations:
+    geo-fence.region: eu-west
+    allowed-regions: eu-west-1,eu-central-1
+    data-residency: eu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: payment-processor
+      region: eu
+  template:
+    metadata:
+      labels:
+        app: payment-processor
+        region: eu
+        data-classification: eu-regulated
+    spec:
+      # Ensure pods only run on EU nodes
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.kubernetes.io/region
+                operator: In
+                values:
+                - eu-west-1
+                - eu-central-1
+              - key: failure-domain.beta.kubernetes.io/region
+                operator: In
+                values:
+                - eu-west-1
+                - eu-central-1
+      containers:
+      - name: payment-app
+        # Use EU-based registry
+        image: eu.gcr.io/company/payment-processor:v1.2.3
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://db.eu-west-1.internal:5432/payments"
+        - name: KMS_KEY_ID
+          value: "arn:aws:kms:eu-west-1:123456789:key/eu-key-id"
+        - name: BACKUP_BUCKET
+          value: "s3://eu-backups-bucket"
+        - name: REGION
+          value: "eu-west-1"
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: eu-payment-data-regional
+
+---
+# Example 2: US-Compliant Deployment with CCPA Requirements
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: us-customer-data-service
+  namespace: production
+  labels:
+    data-classification: us-regulated
+    compliance: ccpa
+  annotations:
+    geo-fence.region: us-west
+    allowed-regions: us-west-2,us-east-1
+    data-residency: us
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: customer-service
+      region: us
+  template:
+    metadata:
+      labels:
+        app: customer-service
+        region: us
+        data-classification: us-regulated
+    spec:
+      # Strict US-only placement
+      nodeSelector:
+        topology.kubernetes.io/region: us-west-2
+      containers:
+      - name: customer-app
+        image: us.gcr.io/company/customer-service:v2.0.1
+        env:
+        - name: DATABASE_HOST
+          value: "rds.us-west-2.amazonaws.com"
+        - name: STORAGE_ENDPOINT
+          value: "s3.us-west-2.amazonaws.com"
+        - name: KMS_REGION
+          value: "us-west-2"
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+
+---
+# Example 3: Regional Storage Class for EU
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: regional-storage-eu
+  labels:
+    region: eu
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp3
+  encrypted: "true"
+  kmsKeyId: "arn:aws:kms:eu-west-1:123456789:key/eu-encryption-key"
+allowedTopologies:
+- matchLabelExpressions:
+  - key: topology.kubernetes.io/zone
+    values:
+    - eu-west-1a
+    - eu-west-1b
+    - eu-west-1c
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+
+---
+# Example 4: Regional PVC for EU Data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: eu-payment-data-regional
+  namespace: production
+  labels:
+    data-classification: eu-regulated
+    region: eu-west-1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: regional-storage-eu
+  resources:
+    requests:
+      storage: 100Gi
+
+---
+# Example 5: Network Policy - Restrict Egress to EU Services Only
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: eu-data-egress-restriction
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      data-classification: eu-regulated
+  policyTypes:
+  - Egress
+  egress:
+  # Allow DNS
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow intra-namespace communication
+  - to:
+    - podSelector: {}
+  # Allow to EU services only
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          region: eu
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 5432  # PostgreSQL
+  # Block all other egress
+
+---
+# Example 6: Istio DestinationRule - Locality-Based Routing
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: eu-service-locality
+  namespace: production
+spec:
+  host: payment-service.production.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      localityLbSetting:
+        enabled: true
+        distribute:
+        - from: eu-west-1/*
+          to:
+            "eu-west-1/*": 80
+            "eu-central-1/*": 20
+        failover:
+        - from: eu-west-1
+          to: eu-central-1  # Failover within EU only
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        http1MaxPendingRequests: 50
+        http2MaxRequests: 100
+    outlierDetection:
+      consecutiveErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+
+---
+# Example 7: ConfigMap with Regional Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eu-regional-config
+  namespace: production
+  labels:
+    region: eu
+    data-classification: eu-regulated
+data:
+  ALLOWED_REGIONS: "eu-west-1,eu-central-1"
+  DATABASE_ENDPOINT: "postgres.eu-west-1.rds.amazonaws.com"
+  STORAGE_ENDPOINT: "s3.eu-west-1.amazonaws.com"
+  KMS_ENDPOINT: "kms.eu-west-1.amazonaws.com"
+  BACKUP_LOCATION: "s3://eu-backups-only-bucket"
+  LOG_DESTINATION: "logs.eu-west-1.internal"
+  COMPLIANCE_MODE: "GDPR"
+
+---
+# Example 8: Service with Regional Annotation
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: production
+  labels:
+    app: payment-processor
+    region: eu
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "false"
+    service.beta.kubernetes.io/aws-load-balancer-subnets: "eu-west-1a,eu-west-1b"
+    geo-fence.region: eu-west-1
+spec:
+  type: LoadBalancer
+  selector:
+    app: payment-processor
+    region: eu
+  ports:
+  - port: 443
+    targetPort: 8443
+    protocol: TCP
+    name: https
+
+---
+# Example 9: Namespace with Data Classification
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: eu-production
+  labels:
+    data-classification: eu-regulated
+    region: eu
+    compliance: gdpr
+    environment: production
+  annotations:
+    geo-fence.region: eu-west
+    allowed-regions: "eu-west-1,eu-central-1"
+    data-residency: "eu"
+    compliance-frameworks: "GDPR,ISO27001"
+
+---
+# Example 10: Job with Regional Backup Configuration
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: eu-data-backup
+  namespace: production
+  labels:
+    data-classification: eu-regulated
+    job-type: backup
+spec:
+  template:
+    metadata:
+      labels:
+        data-classification: eu-regulated
+        job-type: backup
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/region: eu-west-1
+      restartPolicy: OnFailure
+      containers:
+      - name: backup
+        image: eu.gcr.io/company/backup-tool:v1.0.0
+        env:
+        - name: BACKUP_DESTINATION
+          value: "s3://eu-backups-only-bucket/database-backups"
+        - name: AWS_REGION
+          value: "eu-west-1"
+        - name: BACKUP_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: eu-kms-key
+              key: key-id
+        command:
+        - /bin/backup.sh
+        - --region
+        - eu-west-1
+        - --destination
+        - s3://eu-backups-only-bucket
+        volumeMounts:
+        - name: data
+          mountPath: /backup-source
+          readOnly: true
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: eu-payment-data-regional
+
+---
+# Example 11: Secret with Regional KMS Encryption
+apiVersion: v1
+kind: Secret
+metadata:
+  name: eu-database-credentials
+  namespace: production
+  labels:
+    data-classification: eu-regulated
+  annotations:
+    kms-key: "arn:aws:kms:eu-west-1:123456789:key/eu-key-id"
+    encryption-region: "eu-west-1"
+type: Opaque
+stringData:
+  username: "db_user"
+  password: "changeme"  # In production, use sealed secrets or external secrets operator
+  connection-string: "postgresql://db.eu-west-1.internal:5432/production"
+
+---
+# Example 12: Fluentd DaemonSet for Regional Logging
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-eu-logging
+  namespace: logging
+  labels:
+    region: eu
+spec:
+  selector:
+    matchLabels:
+      app: fluentd
+      region: eu
+  template:
+    metadata:
+      labels:
+        app: fluentd
+        region: eu
+    spec:
+      nodeSelector:
+        region: eu
+      containers:
+      - name: fluentd
+        image: fluent/fluentd:v1.14-1
+        env:
+        - name: FLUENT_ELASTICSEARCH_HOST
+          value: "elasticsearch.eu-west-1.internal"
+        - name: FLUENT_ELASTICSEARCH_PORT
+          value: "9200"
+        - name: FLUENT_S3_BUCKET
+          value: "eu-logs-bucket"
+        - name: FLUENT_S3_REGION
+          value: "eu-west-1"
+        - name: AWS_REGION
+          value: "eu-west-1"
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+          readOnly: true
+        - name: config
+          mountPath: /fluentd/etc/fluent.conf
+          subPath: fluent.conf
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: config
+        configMap:
+          name: fluentd-config
+
+---
+# Example 13: HorizontalPodAutoscaler with Regional Constraints
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: eu-payment-processor-hpa
+  namespace: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: eu-payment-processor
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30
+

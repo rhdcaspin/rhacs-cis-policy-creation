@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 """
-RHACS CIS Policy Creator
+RHACS Data Sovereignty Policy Creator
 
 This script connects to Red Hat Advanced Cluster Security (RHACS) and creates
-security policies based on CIS benchmarks for both Kubernetes and Docker.
+security policies specifically designed to enforce data sovereignty and geographic
+data residency requirements.
+
+Data sovereignty policies help ensure compliance with regulations such as:
+- GDPR (General Data Protection Regulation) - EU
+- CCPA (California Consumer Privacy Act) - US
+- LGPD (Lei Geral de Proteção de Dados) - Brazil
+- PIPEDA (Personal Information Protection and Electronic Documents Act) - Canada
+- And other regional data protection regulations
 """
 
 import json
@@ -18,14 +26,13 @@ import urllib3
 # Disable SSL warnings for demo environments
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Global logger (will be configured after loading config)
+# Global logger
 logger = logging.getLogger(__name__)
 
 
 def load_configuration(config_file: str = "config.json") -> Dict[str, Any]:
     """Load application configuration from JSON file."""
     try:
-        # Get the directory where the script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
         config_path = os.path.join(script_dir, config_file)
         
@@ -39,7 +46,7 @@ def load_configuration(config_file: str = "config.json") -> Dict[str, Any]:
         logging.basicConfig(
             level=log_level,
             format=log_format,
-            force=True  # Override any existing configuration
+            force=True
         )
         
         logger.info(f"Successfully loaded configuration from {config_path}")
@@ -75,7 +82,7 @@ class RHACSClient:
                 method=method,
                 url=url,
                 json=data,
-                verify=False  # For demo environments
+                verify=False
             )
             response.raise_for_status()
             return response
@@ -114,27 +121,26 @@ class RHACSClient:
             return []
 
 
-class CISPolicyGenerator:
-    """Generator for CIS benchmark-based security policies."""
+class DataSovereigntyPolicyGenerator:
+    """Generator for data sovereignty security policies."""
     
-    def __init__(self, policies_config_file: str = "cis_policies.json"):
+    def __init__(self, policies_file: str = "data_sovereignty_policies.json"):
         """Initialize the generator with a policies configuration file path."""
-        self.config_file = policies_config_file
+        self.policies_file = policies_file
         self._policies_data = None
     
     def _load_policies(self) -> Dict[str, Any]:
         """Load policies from the JSON configuration file."""
         if self._policies_data is None:
             try:
-                # Get the directory where the script is located
                 script_dir = os.path.dirname(os.path.abspath(__file__))
-                config_path = os.path.join(script_dir, self.config_file)
+                config_path = os.path.join(script_dir, self.policies_file)
                 
                 with open(config_path, 'r', encoding='utf-8') as f:
                     self._policies_data = json.load(f)
                 logger.info(f"Successfully loaded policy configurations from {config_path}")
             except FileNotFoundError:
-                logger.error(f"Policy configuration file '{self.config_file}' not found")
+                logger.error(f"Policy configuration file '{self.policies_file}' not found")
                 raise
             except json.JSONDecodeError as e:
                 logger.error(f"Invalid JSON in policy configuration file: {e}")
@@ -145,38 +151,72 @@ class CISPolicyGenerator:
         
         return self._policies_data
     
-    def get_kubernetes_cis_policies(self) -> List[Dict[str, Any]]:
-        """Load Kubernetes CIS benchmark policies from configuration file."""
-        policies_data = self._load_policies()
-        return policies_data.get('kubernetes_policies', [])
-    
-    def get_docker_cis_policies(self) -> List[Dict[str, Any]]:
-        """Load Docker CIS benchmark policies from configuration file."""
-        policies_data = self._load_policies()
-        return policies_data.get('docker_policies', [])
-    
-    def get_runtime_cis_policies(self) -> List[Dict[str, Any]]:
-        """Load Runtime CIS benchmark policies from configuration file."""
-        policies_data = self._load_policies()
-        return policies_data.get('runtime_policies', [])
-    
-    def get_pqc_policies(self) -> List[Dict[str, Any]]:
-        """Load Post-Quantum Cryptography policies from configuration file."""
-        policies_data = self._load_policies()
-        return policies_data.get('pqc_policies', [])
-    
     def get_data_sovereignty_policies(self) -> List[Dict[str, Any]]:
-        """Load Data Sovereignty policies from configuration file."""
+        """Load data sovereignty policies from configuration file."""
         policies_data = self._load_policies()
         return policies_data.get('data_sovereignty_policies', [])
+    
+    def get_policies_by_region(self, region: str) -> List[Dict[str, Any]]:
+        """Get policies filtered by region (e.g., 'EU', 'US')."""
+        all_policies = self.get_data_sovereignty_policies()
+        region_upper = region.upper()
+        return [
+            policy for policy in all_policies
+            if region_upper in policy.get('name', '').upper() or
+               region_upper in policy.get('description', '').upper()
+        ]
+    
+    def get_policies_by_severity(self, severity: str) -> List[Dict[str, Any]]:
+        """Get policies filtered by severity level."""
+        all_policies = self.get_data_sovereignty_policies()
+        severity_upper = severity.upper()
+        if not severity_upper.endswith('_SEVERITY'):
+            severity_upper += '_SEVERITY'
+        return [
+            policy for policy in all_policies
+            if policy.get('severity', '') == severity_upper
+        ]
+
+
+def print_policy_summary(policies: List[Dict[str, Any]]):
+    """Print a summary of policies to be created."""
+    logger.info("=" * 80)
+    logger.info("DATA SOVEREIGNTY POLICIES SUMMARY")
+    logger.info("=" * 80)
+    
+    by_severity = {}
+    by_lifecycle = {}
+    
+    for policy in policies:
+        severity = policy.get('severity', 'UNKNOWN')
+        by_severity[severity] = by_severity.get(severity, 0) + 1
+        
+        for stage in policy.get('lifecycleStages', []):
+            by_lifecycle[stage] = by_lifecycle.get(stage, 0) + 1
+    
+    logger.info(f"\nTotal policies: {len(policies)}")
+    
+    logger.info("\nBy Severity:")
+    for severity, count in sorted(by_severity.items()):
+        logger.info(f"  {severity}: {count}")
+    
+    logger.info("\nBy Lifecycle Stage:")
+    for stage, count in sorted(by_lifecycle.items()):
+        logger.info(f"  {stage}: {count}")
+    
+    logger.info("\nPolicy List:")
+    for i, policy in enumerate(policies, 1):
+        logger.info(f"  {i}. {policy['name']} [{policy.get('severity', 'N/A')}]")
+    
+    logger.info("=" * 80)
 
 
 def main():
-    """Main function to create CIS benchmark policies in RHACS."""
+    """Main function to create data sovereignty policies in RHACS."""
     # Load configuration first
     config = load_configuration()
     
-    logger.info("Starting RHACS CIS Policy Creator")
+    logger.info("Starting RHACS Data Sovereignty Policy Creator")
     
     # Get RHACS connection parameters from config
     rhacs_config = config.get('rhacs', {})
@@ -199,46 +239,31 @@ def main():
     existing_policies = client.get_existing_policies()
     existing_policy_names = {policy.get('name', '') for policy in existing_policies}
     
-    # Generate CIS policies
+    # Load data sovereignty policies
     try:
         policies_config = config.get('policies', {})
-        policies_config_file = policies_config.get('config_file', 'cis_policies.json')
         skip_existing = policies_config.get('skip_existing', True)
         
-        generator = CISPolicyGenerator(policies_config_file)
-        
-        # Get Kubernetes CIS policies
-        k8s_policies = generator.get_kubernetes_cis_policies()
-        logger.info(f"Loaded {len(k8s_policies)} Kubernetes CIS policies")
-        
-        # Get Docker CIS policies
-        docker_policies = generator.get_docker_cis_policies()
-        logger.info(f"Loaded {len(docker_policies)} Docker CIS policies")
-        
-        # Get Runtime CIS policies
-        runtime_policies = generator.get_runtime_cis_policies()
-        logger.info(f"Loaded {len(runtime_policies)} Runtime CIS policies")
-        
-        # Get PQC policies
-        pqc_policies = generator.get_pqc_policies()
-        logger.info(f"Loaded {len(pqc_policies)} Post-Quantum Cryptography policies")
-        
-        # Get Data Sovereignty policies
+        generator = DataSovereigntyPolicyGenerator()
         data_sovereignty_policies = generator.get_data_sovereignty_policies()
+        
         logger.info(f"Loaded {len(data_sovereignty_policies)} Data Sovereignty policies")
+        
+        # Print summary
+        print_policy_summary(data_sovereignty_policies)
+        
     except Exception as e:
         logger.error(f"Failed to load policy configurations: {e}")
         sys.exit(1)
-    
-    # Combine all policies
-    all_policies = k8s_policies + docker_policies + runtime_policies + pqc_policies + data_sovereignty_policies
     
     # Create policies
     created_count = 0
     skipped_count = 0
     failed_count = 0
     
-    for policy in all_policies:
+    logger.info("\nStarting policy creation...")
+    
+    for policy in data_sovereignty_policies:
         policy_name = policy['name']
         
         # Skip if policy already exists and skip_existing is enabled
@@ -253,22 +278,29 @@ def main():
         else:
             failed_count += 1
     
-    # Summary
-    logger.info("=" * 50)
-    logger.info("RHACS CIS Policy Creation Summary")
-    logger.info("=" * 50)
-    logger.info(f"Total policies processed: {len(all_policies)}")
+    # Final Summary
+    logger.info("=" * 80)
+    logger.info("DATA SOVEREIGNTY POLICY CREATION SUMMARY")
+    logger.info("=" * 80)
+    logger.info(f"Total policies processed: {len(data_sovereignty_policies)}")
     logger.info(f"Successfully created: {created_count}")
     logger.info(f"Skipped (already exist): {skipped_count}")
     logger.info(f"Failed to create: {failed_count}")
-    logger.info("=" * 50)
+    logger.info("=" * 80)
     
     if failed_count > 0:
         logger.warning(f"{failed_count} policies failed to create. Check logs for details.")
         sys.exit(1)
     else:
-        logger.info("All policies processed successfully!")
+        logger.info("All data sovereignty policies processed successfully!")
+        logger.info("\nIMPORTANT NOTES:")
+        logger.info("1. Review and customize region-specific values in policies")
+        logger.info("2. Update node labels to match your cluster topology")
+        logger.info("3. Configure data classification labels for your workloads")
+        logger.info("4. Test policies in non-production environments first")
+        logger.info("5. Some policies require specific annotations/labels to be effective")
 
 
 if __name__ == "__main__":
-    main() 
+    main()
+

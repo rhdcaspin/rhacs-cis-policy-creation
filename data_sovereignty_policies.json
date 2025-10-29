@@ -1,0 +1,407 @@
+{
+  "data_sovereignty_policies": [
+    {
+      "name": "Data-Sovereignty-1 - Restrict Container Registry to Approved Regions (EU)",
+      "description": "Ensure container images are pulled only from EU-based registries to maintain data sovereignty",
+      "disabled": false,
+      "categories": [
+        "Data Sovereignty",
+        "Supply Chain Security"
+      ],
+      "lifecycleStages": [
+        "DEPLOY",
+        "BUILD"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT",
+        "FAIL_BUILD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image Registry",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": "eu.gcr.io"
+                },
+                {
+                  "value": ".*\\.eu\\..*"
+                },
+                {
+                  "value": ".*-eu\\..*"
+                },
+                {
+                  "value": "registry.eu-.*"
+                },
+                {
+                  "value": ".*\\.dkr\\.ecr\\.eu-.*\\.amazonaws\\.com"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0010",
+          "techniques": [
+            "T1537"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "Data-Sovereignty-2 - Restrict Container Registry to Approved Regions (US)",
+      "description": "Ensure container images are pulled only from US-based registries to maintain data sovereignty",
+      "disabled": false,
+      "categories": [
+        "Data Sovereignty",
+        "Supply Chain Security"
+      ],
+      "lifecycleStages": [
+        "DEPLOY",
+        "BUILD"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT",
+        "FAIL_BUILD_ENFORCEMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image Registry",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": "us.gcr.io"
+                },
+                {
+                  "value": ".*\\.us\\..*"
+                },
+                {
+                  "value": ".*-us\\..*"
+                },
+                {
+                  "value": "registry.us-.*"
+                },
+                {
+                  "value": ".*\\.dkr\\.ecr\\.us-.*\\.amazonaws\\.com"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0010",
+          "techniques": [
+            "T1537"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "Data-Sovereignty-5 - Detect Unauthorized Cloud Provider API Access (Runtime)",
+      "description": "Runtime detection of processes accessing cloud provider APIs in unauthorized regions",
+      "disabled": false,
+      "categories": [
+        "Data Sovereignty",
+        "Runtime Security"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Arguments",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*s3\\.us-.*\\.amazonaws\\.com.*"
+                },
+                {
+                  "value": ".*ec2\\.us-.*\\.amazonaws\\.com.*"
+                },
+                {
+                  "value": ".*rds\\.us-.*\\.amazonaws\\.com.*"
+                },
+                {
+                  "value": ".*storage\\.googleapis\\.com.*"
+                },
+                {
+                  "value": ".*\\.azure\\.com.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0010",
+          "techniques": [
+            "T1567"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "Data-Sovereignty-7 - Detect Runtime Database Connections",
+      "description": "Runtime detection of database connection attempts that may violate data sovereignty",
+      "disabled": false,
+      "categories": [
+        "Data Sovereignty",
+        "Database Security"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Arguments",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*mysql.*-h.*"
+                },
+                {
+                  "value": ".*psql.*host=.*"
+                },
+                {
+                  "value": ".*mongodb.*://.*"
+                },
+                {
+                  "value": ".*redis-cli.*-h.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0010",
+          "techniques": [
+            "T1020"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "Data-Sovereignty-8 - Detect Runtime Data Transfer Tools",
+      "description": "Runtime detection of data transfer tools like curl, wget accessing external endpoints",
+      "disabled": false,
+      "categories": [
+        "Data Sovereignty",
+        "Runtime Security"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Activity",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "rclone"
+                },
+                {
+                  "value": "aws"
+                },
+                {
+                  "value": "gsutil"
+                },
+                {
+                  "value": "azcopy"
+                },
+                {
+                  "value": "s3cmd"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0010",
+          "techniques": [
+            "T1567"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "Data-Sovereignty-9 - Restrict Namespace for Regulated Workloads",
+      "description": "Ensure regulated workloads run in approved namespaces only",
+      "disabled": false,
+      "categories": [
+        "Data Sovereignty",
+        "Compliance"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Deployment Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Namespace",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": "production"
+                },
+                {
+                  "value": "prod-.*"
+                },
+                {
+                  "value": ".*-production"
+                },
+                {
+                  "value": "secure-.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0010",
+          "techniques": [
+            "T1537"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "Data-Sovereignty-10 - Detect Host Path Volumes for Data Exfiltration Risk",
+      "description": "Alert on host path volumes that could be used to access sensitive host data",
+      "disabled": false,
+      "categories": [
+        "Data Sovereignty",
+        "Storage Security"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Storage Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Volume Type",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "HostPath"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0010",
+          "techniques": [
+            "T1537"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    }
+  ]
+}
