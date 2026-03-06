@@ -1,0 +1,390 @@
+{
+  "pqc_policies": [
+    {
+      "name": "PQC-1 - Enforce Post-Quantum Cryptography Standards",
+      "description": "Ensures deployments use quantum-resistant cryptographic algorithms and avoid deprecated crypto that is vulnerable to quantum attacks",
+      "rationale": "Traditional cryptographic algorithms (RSA, ECC, DSA) will be vulnerable to quantum computers. Organizations must transition to post-quantum cryptography to maintain security.",
+      "remediation": "Update applications to use NIST-approved post-quantum cryptographic algorithms: CRYSTALS-Dilithium, CRYSTALS-KYBER, FALCON, or SPHINCS+. Avoid RSA keys < 3072 bits, ECC keys < 256 bits, and deprecated hash functions.",
+      "disabled": false,
+      "categories": [
+        "Cryptography",
+        "Security Best Practices",
+        "Vulnerability Management"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Contents",
+          "policyGroups": [
+            {
+              "fieldName": "Image Component",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "openssl=1.0.*"
+                },
+                {
+                  "value": "openssl=1.1.0.*"
+                },
+                {
+                  "value": "openssl=1.1.1[a-h].*"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Environment Value",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*SSL_CIPHER.*RC4.*"
+                },
+                {
+                  "value": ".*TLS_RSA_WITH.*"
+                },
+                {
+                  "value": ".*SSL_RSA_WITH.*"
+                },
+                {
+                  "value": ".*DES.*"
+                },
+                {
+                  "value": ".*MD5.*"
+                },
+                {
+                  "value": ".*SHA1.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "PQC-2 - Detect Weak RSA Key Configurations",
+      "description": "Detects RSA keys smaller than 3072 bits which are vulnerable to quantum attacks and should be upgraded to post-quantum algorithms",
+      "rationale": "RSA keys smaller than 3072 bits can be broken by quantum computers using Shor's algorithm. NIST recommends transitioning to post-quantum cryptography.",
+      "remediation": "Replace RSA keys with NIST-approved post-quantum algorithms: CRYSTALS-Dilithium for signatures, CRYSTALS-KYBER for key exchange.",
+      "disabled": false,
+      "categories": [
+        "Cryptography",
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Environment Value",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*RSA.*1024.*"
+                },
+                {
+                  "value": ".*RSA.*2048.*"
+                },
+                {
+                  "value": ".*RSA_KEYSIZE=(1024|2048).*"
+                },
+                {
+                  "value": ".*SSL_RSA_KEYSIZE=(1024|2048).*"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionName": "Image Contents",
+          "policyGroups": [
+            {
+              "fieldName": "Image OS",
+              "booleanOperator": "AND",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "PQC-3 - Detect Deprecated Hash Algorithms",
+      "description": "Detects use of cryptographically weak hash algorithms (MD5, SHA-1) that are vulnerable to quantum attacks",
+      "rationale": "MD5 and SHA-1 are cryptographically broken and will be even more vulnerable with quantum computing. Applications should use SHA-256, SHA-3, or post-quantum hash functions.",
+      "remediation": "Update applications to use SHA-256, SHA-3, or NIST-approved post-quantum hash functions. Remove all MD5 and SHA-1 usage.",
+      "disabled": false,
+      "categories": [
+        "Cryptography",
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Environment Value",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*HASH.*MD5.*"
+                },
+                {
+                  "value": ".*HASH.*SHA1.*"
+                },
+                {
+                  "value": ".*DIGEST.*MD5.*"
+                },
+                {
+                  "value": ".*DIGEST.*SHA1.*"
+                },
+                {
+                  "value": ".*ALGORITHM.*MD5.*"
+                },
+                {
+                  "value": ".*ALGORITHM.*SHA1.*"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sectionName": "Image Contents",
+          "policyGroups": [
+            {
+              "fieldName": "Image Component",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "md5sum=.*"
+                },
+                {
+                  "value": "sha1sum=.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "PQC-4 - Require PQC-Ready Libraries",
+      "description": "Ensures containers include post-quantum cryptography ready libraries and frameworks",
+      "rationale": "Applications must include PQC-ready cryptographic libraries to support quantum-resistant algorithms like CRYSTALS-Dilithium, CRYSTALS-KYBER, FALCON, and SPHINCS+.",
+      "remediation": "Include PQC-ready libraries such as OpenSSL 3.0+, Bouncy Castle with PQC support, or dedicated PQC libraries like liboqs.",
+      "disabled": false,
+      "categories": [
+        "Cryptography",
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "LOW_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Contents",
+          "policyGroups": [
+            {
+              "fieldName": "Image Component",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": "openssl=3.*"
+                },
+                {
+                  "value": "liboqs=.*"
+                },
+                {
+                  "value": "bouncycastle=.*"
+                },
+                {
+                  "value": "pqcrypto=.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "PQC-5 - Detect Legacy TLS Cipher Suites",
+      "description": "Detects legacy TLS cipher suites that are vulnerable to quantum attacks and should be replaced with PQC-ready alternatives",
+      "rationale": "Legacy TLS cipher suites using RSA, ECDHE, or ECDSA will be vulnerable to quantum attacks. Applications should prepare for TLS 1.3 with post-quantum key exchange.",
+      "remediation": "Configure TLS to use quantum-resistant cipher suites. Prepare for hybrid classical-quantum key exchange mechanisms.",
+      "disabled": false,
+      "categories": [
+        "Cryptography",
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Environment Value",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": ".*TLS_ECDHE_RSA.*"
+                },
+                {
+                  "value": ".*TLS_ECDHE_ECDSA.*"
+                },
+                {
+                  "value": ".*TLS_DHE_RSA.*"
+                },
+                {
+                  "value": ".*TLS_RSA.*"
+                },
+                {
+                  "value": ".*SSL_CIPHER.*ECDHE.*"
+                },
+                {
+                  "value": ".*SSL_CIPHER.*DHE.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    }
+  ]
+}

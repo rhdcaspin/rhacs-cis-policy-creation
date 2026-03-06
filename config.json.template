@@ -10,5 +10,9 @@
   "policies": {
     "config_file": "cis_policies.json",
     "skip_existing": true
+  },
+  "xforce": {
+    "api_key": "your-xforce-api-key-here",
+    "api_password": "your-xforce-api-password-here"
   }
-} 
+}

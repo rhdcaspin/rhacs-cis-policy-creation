@@ -1,0 +1,53 @@
+{
+  "name": "PQC-Env-Test - Environment Variable Detection",
+  "description": "Test policy to detect environment variable configurations",
+  "rationale": "Test implementation of environment variable detection",
+  "remediation": "Update environment variables",
+  "disabled": false,
+  "categories": [
+    "Cryptography"
+  ],
+  "lifecycleStages": [
+    "DEPLOY"
+  ],
+  "eventSource": "NOT_APPLICABLE",
+  "exclusions": [],
+  "scope": [],
+  "severity": "MEDIUM_SEVERITY",
+  "enforcementActions": [
+    "FAIL_DEPLOYMENT"
+  ],
+  "notifiers": [],
+  "SORTName": "",
+  "SORTLifecycleStage": "",
+  "SORTEnforcement": true,
+  "policyVersion": "1.1",
+  "policySections": [
+    {
+      "sectionName": "Container Configuration",
+      "policyGroups": [
+        {
+          "fieldName": "Environment Key",
+          "booleanOperator": "OR",
+          "negate": false,
+          "values": [
+            {
+              "value": ".*SSL_CIPHER.*"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "mitreAttackVectors": [
+    {
+      "tactic": "TA0006",
+      "techniques": [
+        "T1552"
+      ]
+    }
+  ],
+  "criteriaLocked": false,
+  "mitreVectorsLocked": false,
+  "isDefault": false
+}

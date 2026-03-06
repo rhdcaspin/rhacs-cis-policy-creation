@@ -1,0 +1,179 @@
+{
+  "pqc_policies": [
+    {
+      "name": "PQC-1 - Detect Vulnerable OpenSSL Versions",
+      "description": "Detects deprecated OpenSSL versions vulnerable to quantum attacks",
+      "rationale": "OpenSSL versions 1.0.x and 1.1.0.x lack quantum-resistant cryptographic support and should be upgraded",
+      "remediation": "Update to OpenSSL 3.0 or later which includes post-quantum cryptography support",
+      "disabled": false,
+      "categories": [
+        "Cryptography",
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Contents",
+          "policyGroups": [
+            {
+              "fieldName": "Image Component",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "openssl=1.0.*"
+                },
+                {
+                  "value": "openssl=1.1.0.*"
+                },
+                {
+                  "value": "openssl=1.1.1[a-h].*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "PQC-2 - Detect Deprecated Hash Utilities",
+      "description": "Detects presence of deprecated hash utilities (md5sum, sha1sum) vulnerable to quantum attacks",
+      "rationale": "MD5 and SHA-1 are cryptographically broken and will be even more vulnerable with quantum computing",
+      "remediation": "Replace with SHA-256, SHA-3, or quantum-resistant hash functions",
+      "disabled": false,
+      "categories": [
+        "Cryptography",
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": true,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Contents",
+          "policyGroups": [
+            {
+              "fieldName": "Image Component",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "md5sum=.*"
+                },
+                {
+                  "value": "sha1sum=.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "PQC-3 - Promote PQC-Ready Libraries",
+      "description": "Promotes adoption of post-quantum cryptography ready libraries",
+      "rationale": "Applications should include PQC-ready cryptographic libraries to support quantum-resistant algorithms",
+      "remediation": "Include PQC-ready libraries such as OpenSSL 3.0+, liboqs, or Bouncy Castle with PQC support",
+      "disabled": false,
+      "categories": [
+        "Cryptography",
+        "Security Best Practices"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "LOW_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "SORTName": "",
+      "SORTLifecycleStage": "",
+      "SORTEnforcement": false,
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Contents",
+          "policyGroups": [
+            {
+              "fieldName": "Image Component",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "openssl=3.*"
+                },
+                {
+                  "value": "liboqs=.*"
+                },
+                {
+                  "value": "bouncycastle=.*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0006",
+          "techniques": [
+            "T1552"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    }
+  ]
+}
