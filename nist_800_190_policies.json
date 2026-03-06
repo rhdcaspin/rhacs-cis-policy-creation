@@ -1,0 +1,790 @@
+{
+  "nist_800_190_policies": [
+    {
+      "name": "NIST-800-190-4.1.1 - Image Vulnerabilities Not Scanned",
+      "description": "NIST 800-190 Section 4.1: Ensure all images are scanned for vulnerabilities before deployment",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Vulnerability Management"
+      ],
+      "lifecycleStages": [
+        "BUILD",
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_BUILD_ENFORCEMENT",
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Assurance",
+          "policyGroups": [
+            {
+              "fieldName": "Image Age",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "90"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0001",
+          "techniques": [
+            "T1190"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.1.2 - Insecure Container Images",
+      "description": "NIST 800-190 Section 4.1: Do not use images from untrusted registries",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Supply Chain Security"
+      ],
+      "lifecycleStages": [
+        "BUILD",
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_BUILD_ENFORCEMENT",
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Registry",
+          "policyGroups": [
+            {
+              "fieldName": "Image Registry",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": "quay.io"
+                },
+                {
+                  "value": "registry.redhat.io"
+                },
+                {
+                  "value": "gcr.io"
+                },
+                {
+                  "value": ".*\\.dkr\\.ecr\\..*\\.amazonaws\\.com"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0001",
+          "techniques": [
+            "T1195"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.1.3 - Images Without Signature Verification",
+      "description": "NIST 800-190 Section 4.1: Ensure image integrity through signature verification",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Supply Chain Security"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Image Signature",
+          "policyGroups": [
+            {
+              "fieldName": "Image Signature Verified By",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0001",
+          "techniques": [
+            "T1195"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.1.4 - Root User in Container",
+      "description": "NIST 800-190 Section 4.1: Containers should not run as root user",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Privilege Escalation"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Image User",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "root"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.4.1 - Privileged Containers",
+      "description": "NIST 800-190 Section 4.4: Restrict privileged containers that have root capabilities",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Container Runtime"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "CRITICAL_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Container Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Privileged Container",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.4.2 - Host Namespace Sharing",
+      "description": "NIST 800-190 Section 4.4: Do not share host network, PID, or IPC namespaces",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Container Runtime"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Namespace Isolation",
+          "policyGroups": [
+            {
+              "fieldName": "Host Network",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            },
+            {
+              "fieldName": "Host PID",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            },
+            {
+              "fieldName": "Host IPC",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.4.3 - Resource Limits Not Set",
+      "description": "NIST 800-190 Section 4.4: Set resource limits to prevent resource exhaustion attacks",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Resource Management"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Resource Configuration",
+          "policyGroups": [
+            {
+              "fieldName": "Memory Limit (MB)",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            },
+            {
+              "fieldName": "CPU Cores Limit",
+              "booleanOperator": "OR",
+              "negate": true,
+              "values": [
+                {
+                  "value": ".*"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0040",
+          "techniques": [
+            "T1496"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.4.4 - Dangerous Linux Capabilities",
+      "description": "NIST 800-190 Section 4.4: Restrict dangerous Linux capabilities",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Container Runtime"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Capabilities",
+          "policyGroups": [
+            {
+              "fieldName": "Add Capabilities",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "SYS_ADMIN"
+                },
+                {
+                  "value": "NET_ADMIN"
+                },
+                {
+                  "value": "SYS_MODULE"
+                },
+                {
+                  "value": "SYS_PTRACE"
+                },
+                {
+                  "value": "SYS_BOOT"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.4.5 - Privilege Escalation Allowed",
+      "description": "NIST 800-190 Section 4.4: Prevent privilege escalation in containers",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Privilege Escalation"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Security Context",
+          "policyGroups": [
+            {
+              "fieldName": "Allow Privilege Escalation",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "true"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1548"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.5.1 - Sensitive Host Paths Mounted",
+      "description": "NIST 800-190 Section 4.5: Do not mount sensitive host directories",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Host Security"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [
+        "FAIL_DEPLOYMENT"
+      ],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Volume Mounts",
+          "policyGroups": [
+            {
+              "fieldName": "Volume Source",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "/"
+                },
+                {
+                  "value": "/boot"
+                },
+                {
+                  "value": "/dev"
+                },
+                {
+                  "value": "/etc"
+                },
+                {
+                  "value": "/lib"
+                },
+                {
+                  "value": "/proc"
+                },
+                {
+                  "value": "/sys"
+                },
+                {
+                  "value": "/usr"
+                },
+                {
+                  "value": "/var/run/docker.sock"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-4.5.2 - HostPath Volumes Used",
+      "description": "NIST 800-190 Section 4.5: Minimize use of HostPath volumes",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Host Security"
+      ],
+      "lifecycleStages": [
+        "DEPLOY"
+      ],
+      "eventSource": "NOT_APPLICABLE",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Volume Types",
+          "policyGroups": [
+            {
+              "fieldName": "Volume Type",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "HostPath"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0004",
+          "techniques": [
+            "T1611"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-Runtime-1 - Unauthorized Process Execution",
+      "description": "NIST 800-190 Runtime: Detect unauthorized process execution in containers",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Runtime Security"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Process Execution",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "/bin/sh"
+                },
+                {
+                  "value": "/bin/bash"
+                },
+                {
+                  "value": "nc"
+                },
+                {
+                  "value": "netcat"
+                },
+                {
+                  "value": "ncat"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0002",
+          "techniques": [
+            "T1059"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-Runtime-2 - Cryptocurrency Mining Detection",
+      "description": "NIST 800-190 Runtime: Detect cryptocurrency mining processes",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Runtime Security"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "HIGH_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Crypto Mining",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "xmrig"
+                },
+                {
+                  "value": "minerd"
+                },
+                {
+                  "value": "cpuminer"
+                },
+                {
+                  "value": "cryptonight"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0040",
+          "techniques": [
+            "T1496"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    },
+    {
+      "name": "NIST-800-190-Runtime-3 - Package Manager Usage",
+      "description": "NIST 800-190 Runtime: Detect package manager usage indicating unauthorized software installation",
+      "disabled": false,
+      "categories": [
+        "NIST 800-190",
+        "Runtime Security"
+      ],
+      "lifecycleStages": [
+        "RUNTIME"
+      ],
+      "eventSource": "DEPLOYMENT_EVENT",
+      "exclusions": [],
+      "scope": [],
+      "severity": "MEDIUM_SEVERITY",
+      "enforcementActions": [],
+      "notifiers": [],
+      "policyVersion": "1.1",
+      "policySections": [
+        {
+          "sectionName": "Package Management",
+          "policyGroups": [
+            {
+              "fieldName": "Process Name",
+              "booleanOperator": "OR",
+              "negate": false,
+              "values": [
+                {
+                  "value": "apt"
+                },
+                {
+                  "value": "apt-get"
+                },
+                {
+                  "value": "yum"
+                },
+                {
+                  "value": "dnf"
+                },
+                {
+                  "value": "apk"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mitreAttackVectors": [
+        {
+          "tactic": "TA0003",
+          "techniques": [
+            "T1505"
+          ]
+        }
+      ],
+      "criteriaLocked": false,
+      "mitreVectorsLocked": false,
+      "isDefault": false
+    }
+  ]
+}
