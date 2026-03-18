@@ -15,6 +15,11 @@ The compliance reporting tool connects to your RHACS instance, fetches all NIST 
   - Console output with detailed breakdown
   - JSON for programmatic access
   - CSV files for spreadsheet analysis
+  - Interactive HTML dashboard
+- **Claude Code Skills**: Slash command shortcuts for easy report generation
+  - `/setup-nist-reporting` - Guided setup
+  - `/nist-compliance-report` - Full report with guidance
+  - `/quick-nist-report` - Fast report generation
 
 ## NIST 800-190 Policies Covered
 
@@ -128,6 +133,41 @@ Contains one row per policy with compliance statistics:
 - Total Deployments
 - Violations
 - Compliance Rate %
+
+### 3. Generate HTML Dashboard
+
+```bash
+python3 generate_html_dashboard.py
+```
+
+This generates an interactive HTML dashboard with visualizations and statistics.
+
+## Claude Code Skills (Recommended)
+
+For easier report generation, use Claude Code skills with slash commands:
+
+### Installation
+
+```bash
+cd skills
+./install-skills.sh
+```
+
+### Available Skills
+
+- **`/setup-nist-reporting`** - Guided setup for first-time configuration
+- **`/nist-compliance-report`** - Generate full report with step-by-step guidance
+- **`/quick-nist-report`** - Fast report generation for regular use
+
+### Quick Start with Skills
+
+```
+# In Claude Code
+/setup-nist-reporting    # First time setup
+/nist-compliance-report  # Generate comprehensive reports
+```
+
+For detailed skills documentation, see [SKILLS_GUIDE.md](SKILLS_GUIDE.md)
 
 ## Output Examples
 
