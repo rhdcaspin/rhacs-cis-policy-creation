@@ -60,3 +60,18 @@ logs/
 *.temp 
 # NIST 800-190 Environment Configuration
 .env
+
+# NIST Compliance Reporting - Generated Reports
+nist_compliance_reporting/nist_compliance_report_*.json
+nist_compliance_reporting/nist_compliance_detailed_*.csv
+nist_compliance_reporting/nist_compliance_summary_*.csv
+nist_compliance_reporting/nist_policy_summary_*.csv
+nist_compliance_reporting/nist_compliance_dashboard_*.html
+
+# Claude Code temporary files
+.claude/
+
+# NIST Compliance Reporting - Environment Variables
+nist_compliance_reporting/.env
+.env
+rhacs.txt
