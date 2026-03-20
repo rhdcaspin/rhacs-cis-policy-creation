@@ -171,26 +171,55 @@ def generate_html_dashboard():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIST 800-190 Compliance Dashboard</title>
+    <title>NIST 800-190 Compliance Dashboard | Red Hat Advanced Cluster Security</title>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&family=Red+Hat+Text:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #f5f7fa;
-            color: #2c3e50;
+            font-family: 'Red Hat Text', 'Overpass', 'Open Sans', Helvetica, Arial, sans-serif;
+            background: #F5F5F5;
+            color: #151515;
             padding: 20px;
+            line-height: 1.6;
         }}
         .container {{ max-width: 1400px; margin: 0 auto; }}
         .header {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #EE0000 0%, #A30000 100%);
             color: white;
-            padding: 30px;
-            border-radius: 10px;
+            padding: 35px 40px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-left: 5px solid #CC0000;
         }}
-        .header h1 {{ font-size: 32px; margin-bottom: 10px; }}
-        .header p {{ opacity: 0.9; font-size: 14px; }}
+        .header h1 {{
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }}
+        .header .subtitle {{
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            opacity: 0.95;
+        }}
+        .header p {{
+            opacity: 0.9;
+            font-size: 13px;
+            font-weight: 400;
+        }}
+        .rhacs-badge {{
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }}
         .stats-grid {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -199,76 +228,139 @@ def generate_html_dashboard():
         }}
         .stat-card {{
             background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 28px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #EE0000;
+            transition: transform 0.2s, box-shadow 0.2s;
         }}
-        .stat-card h3 {{ font-size: 14px; color: #7f8c8d; margin-bottom: 10px; text-transform: uppercase; }}
-        .stat-card .value {{ font-size: 36px; font-weight: bold; margin-bottom: 5px; }}
-        .stat-card .subtext {{ font-size: 12px; color: #95a5a6; }}
-        .pass {{ color: #27ae60; }}
-        .fail {{ color: #e74c3c; }}
-        .warn {{ color: #f39c12; }}
+        .stat-card:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }}
+        .stat-card h3 {{
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: 13px;
+            color: #6A6E73;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }}
+        .stat-card .value {{
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            line-height: 1;
+        }}
+        .stat-card .subtext {{
+            font-size: 13px;
+            color: #8A8D90;
+            font-weight: 500;
+        }}
+        .pass {{ color: #3E8635; }}
+        .fail {{ color: #C9190B; }}
+        .warn {{ color: #F0AB00; }}
         .section {{
             background: white;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 30px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            border-top: 3px solid #EE0000;
         }}
-        .section h2 {{ margin-bottom: 20px; font-size: 24px; }}
+        .section h2 {{
+            font-family: 'Red Hat Display', sans-serif;
+            margin-bottom: 25px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #151515;
+        }}
         table {{
             width: 100%;
             border-collapse: collapse;
         }}
         th, td {{
-            padding: 12px;
+            padding: 14px 12px;
             text-align: left;
-            border-bottom: 1px solid #ecf0f1;
+            border-bottom: 1px solid #D2D2D2;
         }}
         th {{
-            background: #f8f9fa;
-            font-weight: 600;
+            background: #F5F5F5;
+            font-family: 'Red Hat Display', sans-serif;
+            font-weight: 700;
             font-size: 12px;
             text-transform: uppercase;
-            color: #7f8c8d;
+            color: #6A6E73;
+            letter-spacing: 0.5px;
         }}
-        tr:hover {{ background: #f8f9fa; }}
+        tr:hover {{ background: #FAFAFA; }}
         .progress-bar {{
             width: 100%;
-            height: 8px;
-            background: #ecf0f1;
-            border-radius: 4px;
+            height: 10px;
+            background: #EDEDED;
+            border-radius: 2px;
             overflow: hidden;
         }}
         .progress-fill {{
             height: 100%;
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            background: linear-gradient(90deg, #3E8635 0%, #5BA352 100%);
             transition: width 0.3s ease;
         }}
         .badge {{
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 3px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }}
-        .badge-pass {{ background: #d4edda; color: #155724; }}
-        .badge-fail {{ background: #f8d7da; color: #721c24; }}
+        .badge-pass {{
+            background: #F3FAF2;
+            color: #1E4F18;
+            border: 1px solid #A2D99C;
+        }}
+        .badge-fail {{
+            background: #FDF1F1;
+            color: #7D1007;
+            border: 1px solid #F4C8C5;
+        }}
         .top-issues {{
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            background: #FFF9E8;
+            border-left: 5px solid #F0AB00;
+            padding: 20px;
+            margin-bottom: 25px;
         }}
-        .top-issues h3 {{ color: #856404; margin-bottom: 10px; }}
+        .top-issues h3 {{
+            color: #795600;
+            margin-bottom: 10px;
+            font-family: 'Red Hat Display', sans-serif;
+            font-weight: 700;
+        }}
+        .top-issues p {{
+            color: #5C4A00;
+            font-size: 14px;
+        }}
+        .footer {{
+            text-align: center;
+            padding: 30px;
+            color: #8A8D90;
+            font-size: 13px;
+            border-top: 2px solid #EDEDED;
+            margin-top: 40px;
+        }}
+        .footer strong {{
+            color: #EE0000;
+            font-weight: 700;
+        }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛡️ NIST 800-190 Compliance Dashboard</h1>
-            <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | RHACS Instance: {RHACS_URL}</p>
+            <h1>Red Hat Advanced Cluster Security</h1>
+            <div class="subtitle">NIST 800-190 Compliance Dashboard</div>
+            <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Instance: {RHACS_URL}</p>
+            <span class="rhacs-badge">RHACS Compliance Report</span>
         </div>
 
         <div class="stats-grid">
@@ -295,12 +387,12 @@ def generate_html_dashboard():
         </div>
 
         <div class="top-issues">
-            <h3>⚠️ Top Policy Issues</h3>
+            <h3>⚠ Top Policy Issues</h3>
             <p>The following policies have the most violations across deployments:</p>
         </div>
 
         <div class="section">
-            <h2>📊 Policy Compliance Overview</h2>
+            <h2>Policy Compliance Overview</h2>
             <table>
                 <thead>
                     <tr>
@@ -335,7 +427,7 @@ def generate_html_dashboard():
         </div>
 
         <div class="section">
-            <h2>🎯 Deployment Compliance (Top 50 Least Compliant)</h2>
+            <h2>Deployment Compliance (Top 50 Least Compliant)</h2>
             <table>
                 <thead>
                     <tr>
@@ -370,13 +462,13 @@ def generate_html_dashboard():
     html_content += f"""
                 </tbody>
             </table>
-            <p style="margin-top: 15px; color: #7f8c8d; font-size: 12px;">
+            <p style="margin-top: 15px; color: #8A8D90; font-size: 12px;">
                 Showing top 50 least compliant deployments out of {total_deployments} total
             </p>
         </div>
 
         <div class="section">
-            <h2>📈 Overall Compliance Summary</h2>
+            <h2>Overall Compliance Summary</h2>
             <div class="stats-grid">
                 <div class="stat-card">
                     <h3>Average Compliance Rate</h3>
@@ -393,6 +485,13 @@ def generate_html_dashboard():
                     <div class="subtext fail">{policy_stats[0]['violations'] if policy_stats else 0} violations</div>
                 </div>
             </div>
+        </div>
+
+        <div class="footer">
+            <p>Powered by <strong>Red Hat Advanced Cluster Security</strong></p>
+            <p style="margin-top: 8px; font-size: 12px;">
+                NIST 800-190 Application Container Security Guide Compliance
+            </p>
         </div>
     </div>
 </body>
