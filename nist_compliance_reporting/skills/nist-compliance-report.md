@@ -1,75 +1,124 @@
 # NIST Compliance Report
 
-Generate NIST 800-190 compliance reports from RHACS.
+Generate a NIST 800-190 compliance report from RHACS using policy violations.
 
 ---
 
-You are tasked with generating NIST 800-190 compliance reports from a Red Hat Advanced Cluster Security (RHACS) instance.
+You are tasked with generating a NIST 800-190 compliance report from RHACS.
 
-## Prerequisites Check
+## Step 1: Verify Environment
 
-First, verify the following:
+```bash
+[ -z "$RHACS_URL" ] && echo "ERROR: RHACS_URL not set" && exit 1
+[ -z "$RHACS_API_TOKEN" ] && echo "ERROR: RHACS_API_TOKEN not set" && exit 1
+CURL_OPTS="-s"
+[ "${RHACS_VERIFY_SSL}" = "false" ] && CURL_OPTS="$CURL_OPTS -k"
+echo "Environment OK"
+```
 
-1. Check if we're in the correct directory:
-   - Look for `nist_compliance_reporting/` directory
-   - If not found, ask user for the project location
+## Step 2: Test API Connectivity
 
-2. Verify environment variables are set:
-   - `RHACS_URL` - The RHACS instance URL
-   - `RHACS_API_TOKEN` - The API token for authentication
-   - If not set, guide user to configure them
+```bash
+curl $CURL_OPTS \
+  -H "Authorization: Bearer $RHACS_API_TOKEN" \
+  "$RHACS_URL/v1/metadata" \
+  | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    print('Connected. RHACS version:', d.get('version', 'unknown'))
+except Exception as e:
+    print('ERROR: Could not connect:', e)
+    sys.exit(1)
+"
+```
 
-3. Check if Python dependencies are installed:
-   - `requests`
-   - `urllib3`
-   - If missing, offer to install them
+If this fails:
+- **401 Unauthorized** → token is wrong or expired
+- **Connection error** → check `RHACS_URL`
+- **SSL error** → set `export RHACS_VERIFY_SSL=false` for self-signed certs (dev/test only)
 
-## Report Generation
+## Step 3: Fetch NIST Policies
 
-Once prerequisites are met, generate compliance reports:
+```bash
+curl $CURL_OPTS \
+  -H "Authorization: Bearer $RHACS_API_TOKEN" \
+  "$RHACS_URL/v1/policies?query=Category%3ANIST" \
+  | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+policies = d.get('policies', [])
+print(f'NIST policies configured: {len(policies)}')
+by_sev = {}
+for p in policies:
+    sev = p.get('severity', 'UNKNOWN').replace('_SEVERITY', '')
+    by_sev[sev] = by_sev.get(sev, 0) + 1
+for sev, cnt in sorted(by_sev.items()):
+    print(f'  {sev}: {cnt}')
+if not policies:
+    print('No NIST-category policies found.')
+    print('Create policies with Category=NIST in RHACS, or run /create-compliance-policies.')
+"
+```
 
-1. **Console Report with JSON Export**
-   - Run: `python3 nist_compliance_reporting/nist_compliance_report.py`
-   - This generates a detailed console output and JSON file
+## Step 4: Fetch Active NIST Violations
 
-2. **CSV Reports**
-   - Run: `python3 nist_compliance_reporting/generate_csv_report.py`
-   - This generates 3 CSV files:
-     * Detailed report (all deployments × policies)
-     * Deployment summary
-     * Policy summary
+```bash
+curl $CURL_OPTS \
+  -H "Authorization: Bearer $RHACS_API_TOKEN" \
+  "$RHACS_URL/v1/alerts?query=Category%3ANIST&pagination.limit=500" \
+  | python3 -c "
+import sys, json
 
-3. **HTML Dashboard**
-   - Run: `python3 nist_compliance_reporting/generate_html_dashboard.py`
-   - This generates an interactive HTML dashboard
-   - Offer to open it in the browser
+d = json.load(sys.stdin)
+alerts = d.get('alerts', [])
 
-## Report Summary
+print()
+print('NIST 800-190 Active Violations')
+print('=' * 60)
+print(f'Total active violations: {len(alerts)}')
 
-After generation:
-1. List the generated files with their sizes
-2. Provide a brief summary of key findings:
-   - Total deployments analyzed
-   - Number of NIST policies checked
-   - Top policy violations
-   - Compliance percentage
+by_policy = {}
+by_sev = {}
+namespaces = set()
+clusters = set()
 
-3. Suggest next steps:
-   - View HTML dashboard
-   - Open CSV files for analysis
-   - Review failed policies
+for a in alerts:
+    pol = a.get('policy', {})
+    name = pol.get('name', 'unknown')
+    sev = pol.get('severity', 'UNKNOWN').replace('_SEVERITY', '')
+    ns = a.get('commonEntityInfo', {}).get('namespace', 'unknown')
+    cl = a.get('commonEntityInfo', {}).get('clusterName', 'unknown')
+    by_policy[name] = by_policy.get(name, 0) + 1
+    by_sev[sev] = by_sev.get(sev, 0) + 1
+    namespaces.add(ns)
+    clusters.add(cl)
 
-## Error Handling
+print(f'Namespaces affected: {len(namespaces)}')
+print(f'Clusters affected  : {len(clusters)}')
+print()
+print('Severity breakdown:')
+for sev in ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']:
+    cnt = by_sev.get(sev, 0)
+    if cnt:
+        print(f'  {sev}: {cnt}')
+print()
+print('Top violating policies:')
+for name, cnt in sorted(by_policy.items(), key=lambda x: -x[1])[:10]:
+    print(f'  {cnt:3d}x  {name}')
 
-If errors occur:
-- Missing environment variables → Show setup instructions
-- API connection issues → Verify RHACS URL and token
-- Missing scripts → Check if in correct directory or if files exist
-- Python errors → Check dependencies
+if not alerts:
+    print('No active NIST violations found.')
+    print('Either all NIST policies are passing, or no NIST policies are configured.')
+"
+```
 
-## Output Format
+## Step 5: Summary and Recommendations
 
-Present results in a clear, organized manner:
-- Use formatted output for statistics
-- Highlight critical issues
-- Provide actionable recommendations
+After displaying results, provide:
+1. A brief executive summary (overall NIST compliance posture)
+2. Top 3 violations with remediation guidance:
+   - Privileged containers → remove `privileged: true` from pod specs
+   - Host path mounts → remove or set `readOnly: true`
+   - Missing resource limits → add `resources.limits` to containers
+3. Next steps (fix violations, re-run `/nist-compliance-report` to verify)

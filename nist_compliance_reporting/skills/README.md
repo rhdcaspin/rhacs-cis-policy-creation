@@ -1,167 +1,96 @@
-# Claude Code Skills for Compliance Reporting
+# Claude Code Skills for RHACS Compliance Reporting
 
-This directory contains Claude Code skills that provide slash command shortcuts for multi-framework compliance reporting in RHACS.
+Slash-command skills for generating compliance reports from Red Hat Advanced Cluster Security (RHACS). All skills call the RHACS REST API directly — no external scripts or dependencies required beyond `curl` and `python3`.
 
-## What are Skills?
+## Prerequisites
 
-Skills are reusable prompts in Claude Code that can be invoked with slash commands (e.g., `/commit`, `/review-pr`). They provide specialized workflows for common tasks.
+- `curl` and `python3` available in your shell
+- A running RHACS instance
+- An RHACS API token (Admin or Analyst role)
+- Environment variables set:
+  ```bash
+  export RHACS_URL='https://your-rhacs-instance.com'
+  export RHACS_API_TOKEN='your-api-token'
+  ```
 
-## Quick Installation
+## Installation
+
+Copy the skill files to your Claude Code skills directory:
 
 ```bash
-# From the skills directory
-./install-skills.sh
-```
-
-Or manually:
-
-```bash
-# Copy skills to Claude Code directory
 cp *.md ~/.claude/skills/
 ```
 
+Then restart Claude Code (or open a new session) and the skills will be available.
+
 ## Available Skills
 
-### Universal Skills (Any Framework)
+### `/setup-nist-reporting`
 
-#### `/quick-compliance-setup` ⭐
-**Purpose**: Complete compliance setup workflow
+Initial setup: configure credentials, verify RHACS connectivity, and confirm NIST 800-190 data is available.
 
-One-command setup for any framework:
-- Creates policies in RHACS (PCI-DSS supported)
-- Generates JSON, CSV, and HTML reports
-- Opens dashboard in browser
+### `/nist-compliance-report`
 
-**Frameworks**: PCI-DSS, NIST 800-190, NIST 800-53, HIPAA, CIS, GDPR, SOC 2, ISO 27001, FedRAMP
+Full guided NIST 800-190 report: checks connectivity, fetches compliance results and active violations, and provides a summary with recommendations.
 
-#### `/universal-compliance-report`
-**Purpose**: Generate reports for any framework
+### `/quick-nist-report`
 
-Interactive report generation:
-- Lists available frameworks
-- Generates all report formats
-- Displays summary statistics
+Fast one-liner: pulls NIST 800-190 compliance rate and active alert count in seconds.
 
-#### `/create-compliance-policies`
-**Purpose**: Create compliance policies in RHACS
+### `/universal-compliance-report`
 
-Creates framework-specific policies:
-- PCI-DSS 4.0 (15 policies)
-- More frameworks coming soon
+Report for any built-in RHACS compliance standard:
+- NIST SP 800-190
+- NIST SP 800-53 Rev 4
+- PCI DSS 3.2
+- HIPAA §164
+- CIS Kubernetes v1.5
+- CIS Docker v1.2
 
-### NIST 800-190 Specific Skills
+### `/create-compliance-policies`
 
-#### `/setup-nist-reporting`
-**Purpose**: Initial NIST 800-190 setup
+Create framework-specific policies in RHACS via the API. Currently supports PCI-DSS 4.0 (5 core policies). Uses `POST /v1/policies`.
 
-Sets up RHACS credentials, environment variables, and verifies dependencies.
+### `/quick-compliance-setup`
 
-#### `/nist-compliance-report`
-**Purpose**: Full guided NIST report generation
+End-to-end workflow: choose a framework, optionally create policies, trigger a compliance scan, and display results.
 
-Generates NIST 800-190 reports with detailed feedback, summaries, and recommendations.
+## How Skills Work
 
-#### `/quick-nist-report`
-**Purpose**: Fast NIST report generation
+Each skill is a markdown prompt that instructs Claude to:
+1. Verify environment variables (`RHACS_URL`, `RHACS_API_TOKEN`)
+2. Call the RHACS REST API with `curl`
+3. Parse JSON responses with inline `python3`
+4. Display a formatted compliance summary with recommendations
 
-Quickly generates all NIST 800-190 reports and opens the HTML dashboard.
+No Python scripts, no project directories, no extra dependencies — just the RHACS API.
 
-## Usage
+## Key API Endpoints Used
 
-### Quick Start (Any Framework)
-
-For complete setup with policy creation and reporting:
-
-```
-/quick-compliance-setup
-```
-
-Then select your framework (e.g., `pci-dss`, `hipaa`, `nist-800-190`).
-
-### Generate Reports Only
-
-For existing policies:
-
-```
-/universal-compliance-report
-```
-
-### NIST 800-190 Workflow
-
-Initial setup:
-
-```
-/setup-nist-reporting
-```
-
-Generate reports:
-
-```
-/quick-nist-report
-```
-
-### Create Policies
-
-To create compliance policies in RHACS:
-
-```
-/create-compliance-policies
-```
-
-## Skill Files
-
-**Universal Skills:**
-- `quick-compliance-setup.md` - Complete setup: policies + reports
-- `universal-compliance-report.md` - Multi-framework report generation
-- `create-compliance-policies.md` - Policy creation workflow
-
-**NIST 800-190 Skills:**
-- `setup-nist-reporting.md` - NIST setup and configuration
-- `nist-compliance-report.md` - Full NIST guided report generation
-- `quick-nist-report.md` - Quick NIST report generation
-
-**Utilities:**
-- `install-skills.sh` - Installation script
-- `README.md` - This file
-
-## Documentation
-
-For detailed documentation, see:
-- `../UNIVERSAL_COMPLIANCE_GUIDE.md` - Multi-framework usage guide
-- `../SKILLS_GUIDE.md` - Complete skills guide (NIST 800-190)
-- `../README.md` - Main project documentation
-- `../QUICK_START.md` - Quick reference
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /v1/metadata` | Verify connectivity |
+| `GET /v1/compliance/runresults` | Compliance control results |
+| `GET /v1/alerts?query=Category:X` | Active policy violations |
+| `GET /v1/alertscount` | Count of active alerts |
+| `POST /v1/compliancemanagement/triggerruns` | Trigger a compliance scan |
+| `POST /v1/policies` | Create a policy |
 
 ## Troubleshooting
 
-### Skills not appearing?
-
-1. Verify installation:
-```bash
-ls -la ~/.claude/skills/nist*.md
-```
-
+**Skills not appearing?**
+1. Verify installation: `ls ~/.claude/skills/*.md`
 2. Restart Claude Code
 
-3. Type `/nist` and press Tab to see available skills
+**Empty compliance results?**
+- No scan has run for that framework yet
+- Trigger one in RHACS: Compliance > Scan
+- Or use `/quick-compliance-setup` which triggers a scan automatically
 
-### Skills not working?
+**401 Unauthorized?**
+- Check `RHACS_API_TOKEN` is set and not expired
+- Generate a new token in RHACS: Platform Configuration > Integrations > API Token
 
-1. Check you're in the correct directory (project root)
-2. Verify environment variables are set
-3. Run `/setup-nist-reporting` to reconfigure
-
-## Contributing
-
-To create custom skills:
-
-1. Create a new `.md` file in this directory
-2. Follow the format of existing skills
-3. Test thoroughly
-4. Submit a PR
-
-## Support
-
-- Read the skills guide: `../SKILLS_GUIDE.md`
-- Check main README: `../README.md`
-- Open an issue on GitHub
+**SSL errors?**
+- Add `-k` to curl commands if using self-signed certificates
+- Set a custom CA if required by your organization
