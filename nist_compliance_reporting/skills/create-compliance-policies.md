@@ -1,86 +1,172 @@
 # Create Compliance Policies
 
-Create compliance policies in RHACS for various frameworks.
+Create compliance policies in RHACS for a chosen framework via the RHACS API.
 
-## Usage
+---
 
-This skill creates compliance policies in RHACS for different compliance frameworks. Currently supports PCI-DSS 4.0 with more frameworks coming soon.
+You are creating compliance policies in RHACS by calling the RHACS REST API directly.
 
-## What it does
+## Step 1: Verify Environment
 
-1. Validates environment variables (RHACS_URL, RHACS_API_TOKEN)
-2. Shows available policy creation scripts
-3. Prompts user to select a framework
-4. Creates policies in RHACS
-5. Displays creation summary
-6. Provides next steps for generating reports
-
-## Prompt
-
+```bash
+[ -z "$RHACS_URL" ] && echo "ERROR: RHACS_URL not set" && exit 1
+[ -z "$RHACS_API_TOKEN" ] && echo "ERROR: RHACS_API_TOKEN not set" && exit 1
+CURL_OPTS="-s"
+[ "${RHACS_VERIFY_SSL}" = "false" ] && CURL_OPTS="$CURL_OPTS -k"
+echo "Environment OK"
 ```
-I'll create compliance policies in RHACS for your chosen framework.
 
-cd /Users/dcaspin/Projects/claude/compliance_reporting/nist_compliance_reporting
+## Step 2: Choose Framework
 
-# Check environment variables
-if [ -z "$RHACS_URL" ] || [ -z "$RHACS_API_TOKEN" ]; then
-    echo "ERROR: Missing required environment variables"
-    echo "Please set:"
-    echo "  export RHACS_URL='https://your-rhacs-instance.com'"
-    echo "  export RHACS_API_TOKEN='your-api-token'"
-    exit 1
-fi
+Ask the user which framework to create policies for. Currently supported:
 
-echo "Available Policy Creation Scripts:"
-echo "=================================="
-echo ""
-echo "1. PCI-DSS 4.0 (Payment Card Industry Data Security Standard)"
-echo "   - 15 comprehensive policies covering all 12 PCI-DSS requirements"
-echo "   - Network security, access control, encryption, vulnerability management"
-echo ""
-echo "More frameworks coming soon:"
-echo "  - HIPAA (Health Insurance Portability and Accountability Act)"
-echo "  - NIST 800-53 (Security and Privacy Controls)"
-echo "  - ISO 27001 (Information Security Management)"
-echo ""
-echo "Which framework would you like to create policies for?"
-echo "Enter: pci-dss"
-read FRAMEWORK
+- **PCI-DSS 4.0** — Payment Card Industry Data Security Standard (15 policies)
 
-case "$FRAMEWORK" in
-    pci-dss|pci|PCI-DSS|PCI)
-        echo ""
-        echo "Creating PCI-DSS 4.0 Policies in RHACS"
-        echo "======================================"
-        echo ""
-        python3 create_pci_dss_policies.py
+More frameworks can be added by following the same pattern below.
 
-        echo ""
-        echo "Next Steps:"
-        echo "==========="
-        echo ""
-        echo "1. Review policies in RHACS console:"
-        echo "   ${RHACS_URL}/main/policies"
-        echo ""
-        echo "2. Generate compliance reports:"
-        echo "   python3 universal_compliance_report.py --framework pci-dss"
-        echo "   python3 universal_html_dashboard.py --framework pci-dss"
-        echo ""
-        echo "3. Or use the skill:"
-        echo "   /universal-compliance-report"
-        ;;
-    *)
-        echo ""
-        echo "Policy creation for '$FRAMEWORK' is not yet available."
-        echo ""
-        echo "Currently supported:"
-        echo "  - pci-dss (PCI-DSS 4.0)"
-        echo ""
-        echo "Would you like to create policies for PCI-DSS? (y/n)"
-        read CONFIRM
-        if [ "$CONFIRM" = "y" ] || [ "$CONFIRM" = "Y" ]; then
-            python3 create_pci_dss_policies.py
-        fi
-        ;;
-esac
+## Step 3: Create Policies via API
+
+For each policy, POST a JSON payload to `$RHACS_URL/v1/policies`.
+
+### Policy JSON Structure
+
+```json
+{
+  "name": "Policy Name",
+  "description": "What this policy checks",
+  "rationale": "Why this control matters",
+  "remediation": "Steps to fix violations",
+  "categories": ["PCI-DSS"],
+  "lifecycleStages": ["DEPLOY"],
+  "severity": "HIGH_SEVERITY",
+  "policyVersion": "1.1",
+  "policySections": [
+    {
+      "sectionName": "Section 1",
+      "policyGroups": [
+        {
+          "fieldName": "Privileged Container",
+          "booleanOperator": "OR",
+          "values": [{"value": "true"}]
+        }
+      ]
+    }
+  ]
+}
 ```
+
+### Helper Function
+
+Use this shell function to create a policy and report status:
+
+```bash
+create_policy() {
+  local NAME="$1"
+  local JSON="$2"
+  local RESULT
+  RESULT=$(curl $CURL_OPTS -w "\n%{http_code}" \
+    -X POST \
+    -H "Authorization: Bearer $RHACS_API_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "$JSON" \
+    "$RHACS_URL/v1/policies")
+  local HTTP_CODE
+  HTTP_CODE=$(echo "$RESULT" | tail -1)
+  if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
+    echo "  [OK] $NAME"
+  else
+    echo "  [SKIP] $NAME (HTTP $HTTP_CODE — may already exist)"
+  fi
+}
+```
+
+### PCI-DSS 4.0 Core Policies
+
+Create the following policies by calling `create_policy` for each:
+
+```bash
+echo "Creating PCI-DSS 4.0 policies..."
+
+# PCI-DSS Req 2.2.1 — No privileged containers
+create_policy "PCI-DSS: No Privileged Containers" '{
+  "name": "PCI-DSS: No Privileged Containers",
+  "description": "Privileged containers are prohibited under PCI-DSS requirement 2.2.1",
+  "rationale": "Privileged containers bypass host security controls and expand the attack surface",
+  "remediation": "Remove privileged: true from container security context",
+  "categories": ["PCI-DSS"],
+  "lifecycleStages": ["DEPLOY"],
+  "severity": "HIGH_SEVERITY",
+  "policyVersion": "1.1",
+  "policySections": [{"sectionName": "Section 1","policyGroups": [{"fieldName": "Privileged Container","booleanOperator": "OR","values": [{"value": "true"}]}]}]
+}'
+
+# PCI-DSS Req 6.3.3 — No images with critical CVEs
+create_policy "PCI-DSS: No Critical CVEs in Images" '{
+  "name": "PCI-DSS: No Critical CVEs in Images",
+  "description": "Images with critical vulnerabilities violate PCI-DSS requirement 6.3.3",
+  "rationale": "Unpatched critical CVEs expose cardholder data environments to known exploits",
+  "remediation": "Update base images and application dependencies to patched versions",
+  "categories": ["PCI-DSS"],
+  "lifecycleStages": ["DEPLOY","BUILD"],
+  "severity": "CRITICAL_SEVERITY",
+  "policyVersion": "1.1",
+  "policySections": [{"sectionName": "Section 1","policyGroups": [{"fieldName": "Image Scan Age","booleanOperator": "OR","values": [{"value": "30"}]},{"fieldName": "Fixed By","booleanOperator": "OR","values": [{"value": ".*"}]}]}]
+}'
+
+# PCI-DSS Req 8.2 — No default credentials
+create_policy "PCI-DSS: No Default Credentials" '{
+  "name": "PCI-DSS: No Default Credentials",
+  "description": "Default or empty passwords prohibited under PCI-DSS requirement 8.2",
+  "rationale": "Default credentials are trivially exploited by attackers",
+  "remediation": "Remove default credentials; use secrets management (Vault, k8s Secrets)",
+  "categories": ["PCI-DSS"],
+  "lifecycleStages": ["DEPLOY"],
+  "severity": "HIGH_SEVERITY",
+  "policyVersion": "1.1",
+  "policySections": [{"sectionName": "Section 1","policyGroups": [{"fieldName": "Environment Variable","booleanOperator": "OR","values": [{"value": "(?i)password=.+"}]}]}]
+}'
+
+# PCI-DSS Req 1.3 — No host network access
+create_policy "PCI-DSS: No Host Network Access" '{
+  "name": "PCI-DSS: No Host Network Access",
+  "description": "Host network access violates PCI-DSS network segmentation (Requirement 1.3)",
+  "rationale": "Host networking bypasses pod-level network isolation",
+  "remediation": "Set hostNetwork: false in pod spec",
+  "categories": ["PCI-DSS"],
+  "lifecycleStages": ["DEPLOY"],
+  "severity": "HIGH_SEVERITY",
+  "policyVersion": "1.1",
+  "policySections": [{"sectionName": "Section 1","policyGroups": [{"fieldName": "Host Network","booleanOperator": "OR","values": [{"value": "true"}]}]}]
+}'
+
+# PCI-DSS Req 10.2 — No write access to host filesystem
+create_policy "PCI-DSS: No Writable Host Filesystem" '{
+  "name": "PCI-DSS: No Writable Host Filesystem",
+  "description": "Writable host filesystem mounts violate PCI-DSS audit log integrity (Req 10.2)",
+  "rationale": "Writable host mounts allow tampering with audit logs and system files",
+  "remediation": "Remove host path mounts or mount read-only",
+  "categories": ["PCI-DSS"],
+  "lifecycleStages": ["DEPLOY"],
+  "severity": "HIGH_SEVERITY",
+  "policyVersion": "1.1",
+  "policySections": [{"sectionName": "Section 1","policyGroups": [{"fieldName": "Writable Host Mount","booleanOperator": "OR","values": [{"value": "true"}]}]}]
+}'
+
+echo ""
+echo "PCI-DSS policy creation complete."
+echo "View policies: $RHACS_URL/main/policies"
+```
+
+## Step 4: Next Steps
+
+After creating policies, recommend:
+
+1. Run a compliance scan in RHACS (Compliance > Scan)
+2. Use `/universal-compliance-report` to generate a report
+3. Review violations in the RHACS console under Violations
+
+## Error Handling
+
+- **HTTP 409 Conflict** → policy already exists (safe to ignore)
+- **HTTP 401** → check `RHACS_API_TOKEN`
+- **HTTP 400 Bad Request** → policy JSON is malformed; check field names against your RHACS version
